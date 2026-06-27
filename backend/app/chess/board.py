@@ -9,7 +9,30 @@ def parse_fen(fen: str) -> list[list[str]]:
         An 8x8 grid where board[0] is rank 8 (top from White's view).
         Pieces are FEN chars ('K', 'p', ...); empty squares are "".
     """
-    raise NotImplementedError  # TODO: take field 0, split ranks, expand digits
+    
+    allowed = set("pnbrqk")
+
+    placement = fen.split(" ")[0]
+    rows = placement.split("/")
+
+    if len(rows) != 8:
+        raise ValueError(f"FEN has {len(rows)} ranks, expected 8")
+
+    board = [[] for _ in range(8)]
+
+    for i in range(8):
+        row = rows[i]
+        for c in row:
+            if c.isdigit():
+                for _ in range(int(c)):
+                    board[i].append("")
+            else:
+                if c.lower() not in allowed:
+                    raise ValueError(f"Character {c} not allowed in a FEN string")
+
+                board[i].append(c)
+    return board
+
 
 
 def to_fen(board: list[list[str]]) -> str:

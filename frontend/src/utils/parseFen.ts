@@ -3,7 +3,7 @@
  * @param fen 
  * @returns 2D array
  */
-const parseFEN = (fen: string): string[][] => {
+const parseFen = (fen: string): string[][] => {
     const placement = fen.split(" ")[0]
     const rows = placement.split("/")
 
@@ -29,4 +29,4 @@ const parseFEN = (fen: string): string[][] => {
     return board
 }
 
-export default parseFEN
+export default parseFen

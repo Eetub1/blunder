@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react"
 import DrawBoard from "./components/DrawBoard"
-import parseFEN from "./utils/parseFEN"
+import parseFen from "./utils/parseFen"
 
 // Starting position in FEN notation
 const START = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
 
 function App() {
-    const [board, setBoard] = useState<string[][]>(() => parseFEN(START))
+    const [board, setBoard] = useState<string[][]>(() => parseFen(START))
 
     // Testing the backend
     useEffect(() => {
