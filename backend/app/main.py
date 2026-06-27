@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
-app = FastAPI(title="WannaMate API")
+app = FastAPI(title="Blunder API")
 
 app.add_middleware(
     CORSMiddleware,
