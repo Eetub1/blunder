@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import DrawBoard from "./components/DrawBoard"
 import parseFEN from "./utils/parseFEN"
 
@@ -7,6 +7,15 @@ const START = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
 
 function App() {
     const [board, setBoard] = useState<string[][]>(() => parseFEN(START))
+
+    // Testing the backend
+    useEffect(() => {
+        fetch("http://localhost:8000/api/health")
+            .then(res => res.json())
+            .then(data => console.log("backend:", data))
+            .catch(err => console.error("backend unreachable:", err))
+    }, [])
+
 
     // Just a dummy move handler for testing that everything works.
     // Real app would send the move to the backend
