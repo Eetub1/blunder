@@ -44,9 +44,6 @@ const DrawBoard = ({ board, onMove }: DrawBoardProps) => {
             const parsedObject = JSON.parse(data)
             const fromRow = parsedObject.row
             const fromCol = parsedObject.col
-
-            // Can't drop a piece onto the same square
-            if (fromRow === toRow && fromCol === toCol) return
             
             onMove(fromRow, fromCol, toRow, toCol)
         } catch (err) {
