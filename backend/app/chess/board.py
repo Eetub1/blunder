@@ -44,7 +44,67 @@ def to_fen(board: list[list[str]]) -> str:
     Returns:
         The piece-placement field only (the part before the first space).
     """
-    raise NotImplementedError  # TODO: inverse of parse — collapse empties into counts
+
+    if len(board) != 8:
+        raise ValueError(f"Board should have 8 rows, now it has: {len(board)} rows")
+
+    fen = []
+
+    for row in board:
+        if len(row) != 8:
+            raise ValueError(f"Board row should have 8 cells, now it has {len(row)} cells")
+
+        fen_row = ""
+
+        empty = 0
+        for cell in row:
+            if cell == "":
+                empty += 1
+            else:
+                if empty:
+                    fen_row += (str(empty) + cell)
+                else:
+                    fen_row += cell
+                empty = 0
+        if empty:
+            fen_row += str(empty)
+
+        fen.append(fen_row)
+    return "/".join(fen)
+
+
+def algebraic_to_board_indices(position: str) -> list[int]:
+    """Convert an algebraic square like "e2" into (row, col) board indices.
+
+    Args:
+        position: A two-character algebraic square — a file letter "a"-"h"
+            followed by a rank digit "1"-"8", e.g. "e2".
+
+    Returns:
+        A [row, col] pair for a board where board[0] is rank 8.
+        For example, "e2" -> [6, 4] (rank 2 maps to row 6 because of the flip).
+
+    Raises:
+        ValueError: If position is not exactly two characters, the file is
+            not "a"-"h", or the rank is not a valid digit.
+    """
+
+    if len(position) != 2:
+        raise ValueError(f"Algebraic cell notation should have length 2, now it has {len(position)}")
+
+    lut = {"a": 0, "b": 1, "c": 2, "d": 3, "e": 4, "f": 5, "g": 6, "h": 7}
+
+    col = position[0]
+    row = position[1]
+
+    if col not in lut:
+        raise ValueError(f"Value {col} not allowed in algebraic notation")
+    if not row.isdigit():
+        raise ValueError(f"Value {row} is not a digit")
+    if int(row) < 1 or int(row) > 8:
+        raise ValueError(f"Value {row} should be between 1-8")
+
+    return [8 - int(row), lut[col]] # row, col
 
 
 def apply_move(board: list[list[str]], from_square: str, to_square: str) -> list[list[str]]:
@@ -58,4 +118,10 @@ def apply_move(board: list[list[str]], from_square: str, to_square: str) -> list
     Returns:
         The resulting board.
     """
-    raise NotImplementedError  # TODO: convert squares -> indices, move piece, clear origin
+
+    from_row, from_col = algebraic_to_board_indices(from_square)
+    to_row, to_col = algebraic_to_board_indices(to_square)
+
+    board[to_row][to_col] = board[from_row][from_col]
+    board[from_row][from_col] = ""
+    return board
