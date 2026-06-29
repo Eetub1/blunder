@@ -1,6 +1,9 @@
+import { useState } from "react"
+
 interface DrawBoardProps {
     board: string[][]
     onMove: (fromRow: number, fromCol: number, toRow: number, toCol: number) => void
+    getValidSquares: (from: [number, number]) => Promise<number[][]>
 }
 
 const CELL_SIZE = 64
@@ -26,9 +29,13 @@ const getPieceImage = (char: string) => {
 }
 
 
-const DrawBoard = ({ board, onMove }: DrawBoardProps) => {
-    const handleDragStart = (e: React.DragEvent, row: number, col: number) => {
+const DrawBoard = ({ board, onMove, getValidSquares }: DrawBoardProps) => {
+    const [highlightCells, setHighlightCells] = useState<number[][]>([])
+
+    const handleDragStart = async (e: React.DragEvent, row: number, col: number) => {
         e.dataTransfer.setData("text/plain", JSON.stringify({ row, col }))
+        const validSquares = await getValidSquares([row, col])
+        setHighlightCells(validSquares)
     }
 
     const handleDragOver = (e: React.DragEvent) => {
@@ -44,6 +51,10 @@ const DrawBoard = ({ board, onMove }: DrawBoardProps) => {
             const parsedObject = JSON.parse(data)
             const fromRow = parsedObject.row
             const fromCol = parsedObject.col
+
+            // Prevent moving to the same square
+            // Should be handled in the backend, DELETE THIS CHECK
+            if (fromRow === toRow && fromCol === toCol) return
             
             onMove(fromRow, fromCol, toRow, toCol)
         } catch (err) {
@@ -60,7 +71,7 @@ const DrawBoard = ({ board, onMove }: DrawBoardProps) => {
                         const isLightSquare = (rowIndex + cellIndex) % 2 === 0
 
                         return (
-                            <div 
+                            <div
                                 key={cellIndex} 
                                 onDragOver={handleDragOver}
                                 onDrop={(e) => handleDrop(e, rowIndex, cellIndex)}

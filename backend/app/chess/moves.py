@@ -46,17 +46,17 @@ def calculate_moves(board: list[list[str]], position: str) -> list[str]:
     possibilities = []
     match piece.lower():
         case "r":
-            pass
+            raise NotImplementedError
         case "n":
             possibilities = calculate_knight_moves(board, [row, col], is_white)
         case "b":
-            pass
+            raise NotImplementedError
         case "q":
-            pass
+            raise NotImplementedError
         case "k":
-            pass
+            raise NotImplementedError
         case "p":
-            pass
+            raise NotImplementedError
     return possibilities
 
 

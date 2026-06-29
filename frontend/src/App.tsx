@@ -2,6 +2,7 @@ import { useState, useEffect } from "react"
 import DrawBoard from "./components/DrawBoard"
 import parseFen from "./utils/parseFen"
 import indicesToAlgebraic from "./utils/indicesToAlgebraic"
+import algebraicToIndices from "./utils/algebraicToIndices"
 
 // Starting position in FEN notation
 const START = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
@@ -10,26 +11,12 @@ function App() {
     const [fen, setFen] = useState(START)
 
     // Testing the backend
-    /*useEffect(() => {
+    useEffect(() => {
         fetch("http://localhost:8000/api/health")
             .then(res => res.json())
-    }, [])*/
+            .then(data => console.log(`Backend: ${data.status}`))
+    }, [])
 
-
-    // Just a dummy move handler for testing that everything works.
-    // Real app would send the move to the backend
-    /*const handleDummyMove = (fromRow: number, fromCol: number, toRow: number, toCol: number) => {
-        // Create a new board to trigger a re-render
-        const newBoard = board.map(row => [...row])
-
-        const movingPiece = newBoard[fromRow][fromCol]
-
-        if (movingPiece) {
-            newBoard[toRow][toCol] = movingPiece
-            newBoard[fromRow][fromCol] = ""
-            setBoard(newBoard)
-        }
-    }*/
 
     const handleMove = (fromRow: number, fromCol: number, toRow: number, toCol: number) => {
         const from_square = indicesToAlgebraic([fromRow, fromCol])
@@ -55,9 +42,28 @@ function App() {
     }
 
 
+    const getValidSquares = (from: [number, number]): Promise<number[][]> => {
+        const content = { fen, square: indicesToAlgebraic(from) }
+
+        return fetch("http://localhost:8000/api/moves", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(content)
+        })
+            .then(res => res.json())
+            .then(data => data.valid_squares.map(algebraicToIndices))
+            .catch(err => {
+                console.error("Failed to get valid squares: ", err)
+                return []
+            })
+    }
+
+
     return (
         <>
-            <DrawBoard board={parseFen(fen)} onMove={handleMove}/>
+            <DrawBoard board={parseFen(fen)} onMove={handleMove} getValidSquares={getValidSquares}/>
         </>
     )
 }

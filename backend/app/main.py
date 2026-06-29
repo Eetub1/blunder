@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 from app.chess.board import parse_fen, apply_move, to_fen
+from app.chess.moves import calculate_moves
 
 app = FastAPI(title="Blunder API")
 
@@ -27,6 +28,13 @@ class MoveResponse(BaseModel):
     fen: str
     legal: bool
 
+class ValidSquaresRequest(BaseModel):
+    fen: str
+    square: str
+
+class ValidSquaresResponse(BaseModel):
+    valid_squares: list[str]
+
 
 @app.post("/api/move", response_model=MoveResponse)
 def make_move(req: MoveRequest):
@@ -46,3 +54,14 @@ def make_move(req: MoveRequest):
 
     # right now every move is true
     return MoveResponse(fen=fen, legal=True)
+
+
+@app.post("/api/moves", response_model=ValidSquaresResponse)
+def get_valid_squares(req: ValidSquaresRequest):
+    try:
+        board = parse_fen(req.fen.split(" ")[0])
+        valid_squares = calculate_moves(board, req.square)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    
+    return ValidSquaresResponse(valid_squares=valid_squares)
