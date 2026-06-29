@@ -20,7 +20,7 @@ def health():
 
 class MoveRequest(BaseModel):
     fen: str
-    from_square: str # these are both in algebraic notation, so "e4"
+    from_square: str # algebraic notation, i.e. "e4"
     to_square: str
 
 class MoveResponse(BaseModel):

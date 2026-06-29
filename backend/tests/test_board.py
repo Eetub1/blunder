@@ -1,8 +1,6 @@
 # This file is fully AI generated!
-
 import pytest
-
-from app.chess.board import parse_fen, to_fen, apply_move, algebraic_to_board_indices
+from app.chess.board import parse_fen, to_fen, apply_move, algebraic_to_indices
 
 
 # --- round-trip: parse then serialize should give back the original placement ---
@@ -69,19 +67,19 @@ def test_to_fen_trailing_empties():
     assert to_fen(board) == "8/8/8/8/8/8/8/4P3"
 
 
-# --- algebraic_to_board_indices: the conversion + the rank flip ---
+# --- algebraic_to_indices: the conversion + the rank flip ---
 
 def test_algebraic_corners():
-    assert algebraic_to_board_indices("a1") == [7, 0]
-    assert algebraic_to_board_indices("h8") == [0, 7]
-    assert algebraic_to_board_indices("e2") == [6, 4]
-    assert algebraic_to_board_indices("a8") == [0, 0]
+    assert algebraic_to_indices("a1") == [7, 0]
+    assert algebraic_to_indices("h8") == [0, 7]
+    assert algebraic_to_indices("e2") == [6, 4]
+    assert algebraic_to_indices("a8") == [0, 0]
 
 
 @pytest.mark.parametrize("bad", ["e9", "e0", "z2", "a", "abc", "12"])
 def test_algebraic_rejects_bad_input(bad):
     with pytest.raises(ValueError):
-        algebraic_to_board_indices(bad)
+        algebraic_to_indices(bad)
 
 
 # --- apply_move: mechanical move and capture, no legality ---

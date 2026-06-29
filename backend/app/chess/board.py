@@ -1,4 +1,3 @@
-
 def parse_fen(fen: str) -> list[list[str]]:
     """Parse a FEN string into a 2D board.
 
@@ -9,7 +8,6 @@ def parse_fen(fen: str) -> list[list[str]]:
         An 8x8 grid where board[0] is rank 8 (top from White's view).
         Pieces are FEN chars ('K', 'p', ...); empty squares are "".
     """
-    
     allowed = set("pnbrqk")
 
     placement = fen.split(" ")[0]
@@ -34,7 +32,6 @@ def parse_fen(fen: str) -> list[list[str]]:
     return board
 
 
-
 def to_fen(board: list[list[str]]) -> str:
     """Serialize a board back into a FEN piece-placement field.
 
@@ -44,7 +41,6 @@ def to_fen(board: list[list[str]]) -> str:
     Returns:
         The piece-placement field only (the part before the first space).
     """
-
     if len(board) != 8:
         raise ValueError(f"Board should have 8 rows, now it has: {len(board)} rows")
 
@@ -73,7 +69,7 @@ def to_fen(board: list[list[str]]) -> str:
     return "/".join(fen)
 
 
-def algebraic_to_board_indices(position: str) -> list[int]:
+def algebraic_to_indices(position: str) -> list[int]:
     """Convert an algebraic square like "e2" into (row, col) board indices.
 
     Args:
@@ -88,7 +84,6 @@ def algebraic_to_board_indices(position: str) -> list[int]:
         ValueError: If position is not exactly two characters, the file is
             not "a"-"h", or the rank is not a valid digit.
     """
-
     if len(position) != 2:
         raise ValueError(f"Algebraic cell notation should have length 2, now it has {len(position)}")
 
@@ -107,6 +102,13 @@ def algebraic_to_board_indices(position: str) -> list[int]:
     return [8 - int(row), lut[col]] # row, col
 
 
+# TODO documentation
+def indices_to_algebraic(indices: list[int]) -> str:
+    row, col = indices
+    lut = {0: "a", 1: "b", 2: "c", 3: "d", 4: "e", 5: "f", 6: "g", 7: "h"}
+    return lut[col] + str(8 - row)
+
+
 def apply_move(board: list[list[str]], from_square: str, to_square: str) -> list[list[str]]:
     """Move a piece from one square to another. No legality checking.
 
@@ -118,9 +120,8 @@ def apply_move(board: list[list[str]], from_square: str, to_square: str) -> list
     Returns:
         The resulting board.
     """
-
-    from_row, from_col = algebraic_to_board_indices(from_square)
-    to_row, to_col = algebraic_to_board_indices(to_square)
+    from_row, from_col = algebraic_to_indices(from_square)
+    to_row, to_col = algebraic_to_indices(to_square)
 
     board[to_row][to_col] = board[from_row][from_col]
     board[from_row][from_col] = ""
