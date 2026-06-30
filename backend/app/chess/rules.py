@@ -1,0 +1,135 @@
+"""Chess rules and legality: check detection and legal-move filtering.
+
+This module sits on top of move generation. The dependency flows one way:
+rules.py -> moves.py -> board.py (never backward), which avoids circular imports.
+
+Key distinction this module enforces:
+  - PSEUDO-LEGAL moves (from moves.py) ignore check.
+  - LEGAL moves are pseudo-legal moves that don't leave your own king in check.
+"""
+
+from app.chess.board import apply_move, indices_to_algebraic, algebraic_to_indices
+from app.chess.moves import calculate_moves, is_position_inbounds, square_state, CellContentType
+
+
+def find_king(board: list[list[str]], is_white: bool) -> list[int]:
+    """Locate the given side's king on the board.
+
+    Args:
+        board: The current board.
+        is_white: True to find the white king ("K"), False for black ("k").
+
+    Returns:
+        The king's square as [row, col].
+
+    Raises:
+        ValueError: If no such king is on the board (should never happen in a
+            real game, but worth failing loudly rather than returning nonsense).
+    """
+    target = "K" if is_white else "k"
+
+    for i in range(len(board)):
+        for j in range(len(board[0])):
+            if board[i][j] == target:
+                return [i, j]
+
+    raise ValueError("Couldn't find the given side's king on board")
+
+
+def is_square_attacked(board: list[list[str]], square: list[int], by_white: bool) -> bool:
+    """Return True if `square` is attacked by any piece of the given color.
+
+    This is the core primitive: check detection is just "is the king's square
+    attacked by the enemy?"
+
+    Args:
+        board: The current board.
+        square: The [row, col] being tested.
+        by_white: True to test for attacks by white pieces, False for black.
+
+    Returns:
+        True if at least one piece of color `by_white` attacks `square`.
+    """
+    t_row, t_col = square
+
+    for row in range(len(board)):
+        for col in range(len(board[0])):
+            contains = board[row][col]
+
+            if (not contains
+                or (not by_white and contains.upper() == contains) 
+                or (by_white and contains.lower() == contains)):
+                continue
+
+            if contains.lower() == "p": # Handle pawn separately
+                offsets = [(-1, 1), (-1, -1)] if by_white else [(1, 1), (1, -1)]
+
+                valid_squares = []
+
+                # Check if pawn can attack left and right
+                for dy, dx in offsets:
+                    n_row = row + dy
+                    n_col = col + dx
+                    if is_position_inbounds([n_row, n_col]):
+                        valid_squares.append(indices_to_algebraic([n_row, n_col]))
+            else:
+                valid_squares = calculate_moves(board, indices_to_algebraic([row, col]))
+            
+            if indices_to_algebraic([t_row, t_col]) in valid_squares:
+                return True
+    return False
+
+
+def is_in_check(board: list[list[str]], is_white: bool) -> bool:
+    """Return True if the given side's king is currently in check.
+
+    Args:
+        board: The current board.
+        is_white: True to test the white king, False for black.
+
+    Returns:
+        True if that king's square is attacked by the opponent.
+    """
+    location = find_king(board, is_white)
+    return is_square_attacked(board, location, not is_white)
+
+
+def is_move_legal(board: list[list[str]], from_square: str, to_square: str, is_white: bool) -> bool:
+    """Return True if making this move does NOT leave the mover's own king in check.
+
+    Args:
+        board: The current board.
+        from_square: Algebraic origin, e.g. "e2".
+        to_square: Algebraic destination, e.g. "e4".
+        is_white: True if the moving side is white.
+
+    Returns:
+        True if the resulting position has the mover's own king safe.
+    """
+    # TODO: apply the move to a COPY (apply_move is now pure, so it returns a
+    #       fresh board — your real board is untouched). This is exactly why we
+    #       made apply_move copy.
+    # TODO: on that resulting board, return `not is_in_check(..., is_white)`.
+    # Note: this assumes from->to is already pseudo-legal; this function only
+    # adds the "doesn't expose own king" filter on top.
+    raise NotImplementedError
+
+
+def calculate_legal_moves(board: list[list[str]], position: str, is_white: bool) -> list[str]:
+    """Return the fully-legal moves for the piece on `position`.
+
+    Pseudo-legal moves (from moves.py) filtered down to those that don't leave
+    the mover's own king in check. This is what the rest of the app should use
+    for "what can this piece actually do."
+
+    Args:
+        board: The current board.
+        position: The square to generate moves from, in algebraic notation.
+        is_white: True if the piece is white.
+
+    Returns:
+        Legal destination squares in algebraic notation.
+    """
+    # TODO: get pseudo-legal moves: calculate_moves(board, position).
+    # TODO: keep only those where is_move_legal(board, position, target, is_white).
+    raise NotImplementedError

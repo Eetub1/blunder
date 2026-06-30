@@ -102,15 +102,25 @@ def algebraic_to_indices(position: str) -> list[int]:
     return [8 - int(row), lut[col]] # row, col
 
 
-# TODO documentation
 def indices_to_algebraic(indices: list[int]) -> str:
+    """Convert [row, col] board indices into an algebraic square like "e2".
+
+    The inverse of algebraic_to_indices. Undoes the rank flip: row 0 is rank 8
+    (top from White's view), so the rank digit is 8 - row.
+
+    Args:
+        indices: A [row, col] pair for a board where board[0] is rank 8.
+
+    Returns:
+        The square in algebraic notation, e.g. [6, 4] -> "e2".
+    """
     row, col = indices
     lut = {0: "a", 1: "b", 2: "c", 3: "d", 4: "e", 5: "f", 6: "g", 7: "h"}
     return lut[col] + str(8 - row)
 
 
 def apply_move(board: list[list[str]], from_square: str, to_square: str) -> list[list[str]]:
-    """Move a piece from one square to another. No legality checking.
+    """Move a piece from one square to another. No legality checking. Copies the board
 
     Args:
         board: The current board.
@@ -120,9 +130,16 @@ def apply_move(board: list[list[str]], from_square: str, to_square: str) -> list
     Returns:
         The resulting board.
     """
+    board_copy = [[] for _ in range(8)]
+
+    for i in range(len(board)):
+        row = board_copy[i]
+        for j in range(len(board[0])):
+            row.append(board[i][j])
+
     from_row, from_col = algebraic_to_indices(from_square)
     to_row, to_col = algebraic_to_indices(to_square)
 
-    board[to_row][to_col] = board[from_row][from_col]
-    board[from_row][from_col] = ""
-    return board
+    board_copy[to_row][to_col] = board_copy[from_row][from_col]
+    board_copy[from_row][from_col] = ""
+    return board_copy

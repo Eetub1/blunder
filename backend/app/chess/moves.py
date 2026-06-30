@@ -1,7 +1,20 @@
+"""Pseudo-legal move generation for chess pieces.
+
+"Pseudo-legal" means these functions return all moves a piece can geometrically
+make, WITHOUT checking whether the move leaves its own king in check. Filtering
+those down to fully-legal moves happens in rules.py, which builds on this module.
+
+Board representation: an 8x8 list of lists where board[0] is rank 8 (top from
+White's view). Pieces are FEN characters ('K', 'p', ...); empty squares are "".
+Functions take squares as [row, col] index pairs internally and return them to
+callers as algebraic strings (e.g. "e4").
+"""
+
 from app.chess.board import indices_to_algebraic, algebraic_to_indices
 from enum import Enum
 
 class CellContentType(Enum):
+    """How a target square relates to the piece being moved."""
     EMPTY = "empty"
     FRIEND = "friend"
     ENEMY = "enemy"
@@ -91,6 +104,22 @@ def square_state(board: list[list[str]], position: list[int], is_white: bool) ->
 
 
 def calculate_sliding_moves(board: list[list[str]], position: list[int], is_white: bool, directions: list[tuple[int, int]]) -> list[str]:
+    """Generate pseudo-legal moves for a sliding piece (rook, bishop, queen).
+
+    Steps repeatedly along each direction until blocked: it glides over empty
+    squares, captures the first enemy it meets (then stops), and stops before a
+    friendly piece. The piece type is determined entirely by `directions`.
+
+    Args:
+        board: The current board.
+        position: The piece's square as [row, col].
+        is_white: True if the piece is white.
+        directions: (row_delta, col_delta) pairs to slide along, e.g.
+            ROOK_DIRECTIONS for a rook.
+
+    Returns:
+        Destination squares in algebraic notation.
+    """
     row, col = position
 
     valid_squares = []
@@ -111,6 +140,22 @@ def calculate_sliding_moves(board: list[list[str]], position: list[int], is_whit
 
 
 def calculate_stepping_moves(board: list[list[str]], position: list[int], is_white: bool, directions: list[tuple[int, int]]) -> list[str]:
+    """Generate pseudo-legal moves for a single-step piece (knight, king).
+
+    Tries each direction exactly once (no sliding). A target is valid unless it
+    is off-board or holds a friendly piece. The piece type is determined
+    entirely by `directions`.
+
+    Args:
+        board: The current board.
+        position: The piece's square as [row, col].
+        is_white: True if the piece is white.
+        directions: (row_delta, col_delta) offsets to try once each, e.g.
+            KNIGHT_DIRECTIONS for a knight.
+
+    Returns:
+        Destination squares in algebraic notation.
+    """
     row, col = position
 
     valid_squares = []
@@ -126,6 +171,27 @@ def calculate_stepping_moves(board: list[list[str]], position: list[int], is_whi
 
 
 def calculate_pawn_moves(board: list[list[str]], position: list[int], is_white: bool) -> list[str]:
+    """Generate pseudo-legal pawn moves from `position`.
+
+    Pawns are the one piece whose movement and capture rules differ, and which
+    depend on color for direction:
+      - move one square straight forward, only if that square is EMPTY;
+      - move two squares forward, only from the starting rank and only if BOTH
+        squares ahead are empty;
+      - capture one square diagonally forward, only if that square holds an ENEMY.
+    White moves toward row 0 (up); black moves toward row 7 (down).
+
+    Does NOT yet handle promotion or en passant (both deferred: promotion belongs
+    to move application, en passant needs move history).
+
+    Args:
+        board: The current board.
+        position: The pawn's square as [row, col].
+        is_white: True if the pawn is white.
+
+    Returns:
+        Destination squares in algebraic notation.
+    """
     row, col = position
     valid_squares = []
 
