@@ -1,8 +1,11 @@
+/*Some of the UI parts are AI generated*/
+
 import { useState } from "react"
+import type { PendingPromotion } from "../types/types"
 
 interface DrawBoardProps {
     board: string[][]
-    handleMove: (fromRow: number, fromCol: number, toRow: number, toCol: number) => void
+    handleMove: (fromRow: number, fromCol: number, toRow: number, toCol: number, promotion: string) => void
     getValidSquares: (from: [number, number]) => Promise<number[][]>
 }
 
@@ -31,6 +34,7 @@ const getPieceImage = (char: string) => {
 
 const DrawBoard = ({ board, handleMove, getValidSquares }: DrawBoardProps) => {
     const [highlightCells, setHighlightCells] = useState<number[][]>([])
+    const [pendingPromotion, setPendingPromotion] = useState<PendingPromotion | null>(null)
 
     const handleDragStart = async (e: React.DragEvent, row: number, col: number) => {
         e.dataTransfer.setData("text/plain", JSON.stringify({ row, col }))
@@ -54,18 +58,39 @@ const DrawBoard = ({ board, handleMove, getValidSquares }: DrawBoardProps) => {
             const fromRow = parsedObject.row
             const fromCol = parsedObject.col
 
-            // Prevent moving to the same square
-            // Should be handled in the backend, DELETE THIS CHECK
-            //if (fromRow === toRow && fromCol === toCol) return
-            
-            handleMove(fromRow, fromCol, toRow, toCol)
+            const piece = board[fromRow][fromCol]
+
+            let promotionAvailable = false
+            let isWhite = false
+            if (piece.toLowerCase() === "p") {
+                isWhite = piece === piece.toUpperCase()
+                if (!isWhite && toRow === 7) promotionAvailable = true
+                if (isWhite && toRow === 0) promotionAvailable = true
+            }
+
+            if (promotionAvailable) {
+                setPendingPromotion({ fromRow, fromCol, toRow, toCol, isWhite })
+            } else {
+                handleMove(fromRow, fromCol, toRow, toCol, "")
+            }
         } catch (err) {
             console.error("Failed to parse drag data", err)
         }
     }
 
+    const choosePromotion = (pieceType: string) => {
+        if (!pendingPromotion) return
+        const { fromRow, fromCol, toRow, toCol, isWhite } = pendingPromotion
+
+        const newPiece = isWhite ? pieceType.toUpperCase() : pieceType.toLowerCase()
+        handleMove(fromRow, fromCol, toRow, toCol, newPiece)
+        setPendingPromotion(null)
+    }
+
+    const promotionChoices = ["q", "r", "b", "n"]
+
     return (
-        <div style={{ userSelect: "none" }}>
+        <div id="boardContainer">
             {board.map((row, rowIndex) => (
                 <div key={rowIndex} style={{ display: "flex" }}>
                     {row.map((cell, colIndex) => {
@@ -100,6 +125,34 @@ const DrawBoard = ({ board, handleMove, getValidSquares }: DrawBoardProps) => {
                     })}
                 </div>
             ))}
+
+            {pendingPromotion && (
+                <>
+                    <div style={{position: "absolute", inset: 0, backgroundColor: "rgba(0,0,0,0.4)"}}></div>
+                    <div
+                        style={{
+                            position: "absolute", top: "50%", left: "50%",
+                            transform: "translate(-50%, -50%)",
+                            display: "flex", gap: 8, padding: 12,
+                            backgroundColor: "#fff", borderRadius: 8,
+                            boxShadow: "0 4px 16px rgba(0,0,0,0.3)"
+                        }}
+                    >
+                        {promotionChoices.map((type) => {
+                            const displayChar = pendingPromotion.isWhite ? type.toUpperCase() : type
+                            return (
+                                <img
+                                    key={type}
+                                    src={getPieceImage(displayChar)}
+                                    alt={displayChar}
+                                    onClick={() => choosePromotion(type)}
+                                    style={{ width: CELL_SIZE, height: CELL_SIZE, cursor: "pointer" }}
+                                />
+                            )
+                        })}
+                    </div>
+                </>
+            )}
         </div>
     )
 }

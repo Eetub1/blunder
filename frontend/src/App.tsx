@@ -18,10 +18,18 @@ function App() {
     }, [])
 
 
-    const handleMove = (fromRow: number, fromCol: number, toRow: number, toCol: number) => {
+    const handleMove = (fromRow: number, fromCol: number, toRow: number, toCol: number, promotion: string) => {
         const from_square = indicesToAlgebraic([fromRow, fromCol])
         const to_square = indicesToAlgebraic([toRow, toCol])
-        const content = {fen, from_square, to_square}
+        let content
+
+        // Right now the promoted piece is always a queen
+        // This should be asked on the frontend TODO
+        if (promotion) {
+            content = {fen, from_square, to_square, promotion: promotion}
+        } else {
+            content = {fen, from_square, to_square}
+        }
 
         fetch("http://localhost:8000/api/move", {
             method: "POST",

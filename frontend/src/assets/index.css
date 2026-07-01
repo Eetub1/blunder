@@ -12,3 +12,7 @@
     background-color: rgba(20, 20, 20, 0.28);
     pointer-events: none;
 }
+
+#boardContainer {
+    position: relative
+}

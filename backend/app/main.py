@@ -2,7 +2,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
-from app.chess.board import parse_fen, apply_move, to_fen, flip_turn
+from app.chess.board import parse_fen, apply_move, to_fen, flip_turn, algebraic_to_indices
 from app.chess.moves import calculate_moves
 from app.chess.rules import calculate_legal_moves, is_move_legal
 
@@ -24,6 +24,7 @@ class MoveRequest(BaseModel):
     fen: str
     from_square: str # algebraic notation, i.e. "e4"
     to_square: str
+    promotion: str | None = None # example "q" is pawn can be promoted to queen
 
 class MoveResponse(BaseModel):
     fen: str
@@ -54,6 +55,12 @@ def make_move(req: MoveRequest):
             return MoveResponse(fen=original_fen, legal=False)
         
         board = apply_move(board, req.from_square, req.to_square)
+
+        # if the move is a promotion, put the correct promoted piece on board
+        if req.promotion:
+            row, col = algebraic_to_indices(req.to_square)
+            board[row][col] = req.promotion
+
         fen_placement = to_fen(board)
 
         fen = fen_placement + " " + " ".join(fen_tail)

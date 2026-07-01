@@ -192,11 +192,9 @@ def calculate_pawn_moves(board: list[list[str]], position: list[int], is_white: 
     start_row = -1
 
     if is_white:
-        promotion_row = 0
         offsets = white_offsets
         start_row = 6
     else:
-        promotion_row = 7
         offsets = black_offsets
         start_row = 1
 
@@ -204,9 +202,6 @@ def calculate_pawn_moves(board: list[list[str]], position: list[int], is_white: 
     if is_position_inbounds([n_row, col]):
         # can pawn move 1 square ahead
         if square_state(board, [n_row, col], is_white) == CellContentType.EMPTY:
-            #if n_row == promotion_row:
-                
-            #else:
             valid_squares.append(indices_to_algebraic([n_row, col]))
 
             # can pawn move 2 squares ahead
