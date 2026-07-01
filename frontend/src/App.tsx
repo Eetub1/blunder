@@ -63,7 +63,7 @@ function App() {
 
     return (
         <>
-            <DrawBoard board={parseFen(fen)} onMove={handleMove} getValidSquares={getValidSquares}/>
+            <DrawBoard board={parseFen(fen)} handleMove={handleMove} getValidSquares={getValidSquares}/>
         </>
     )
 }

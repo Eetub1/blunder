@@ -69,6 +69,12 @@ def to_fen(board: list[list[str]]) -> str:
     return "/".join(fen)
 
 
+def flip_turn(fen: str) -> str:
+    fen_parts = fen.split(" ")
+    fen_parts[1] = "b" if fen_parts[1] == "w" else "w"
+    return " ".join(fen_parts)
+
+
 def algebraic_to_indices(position: str) -> list[int]:
     """Convert an algebraic square like "e2" into (row, col) board indices.
 

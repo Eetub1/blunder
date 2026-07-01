@@ -91,16 +91,10 @@ def square_state(board: list[list[str]], position: list[int], is_white: bool) ->
     if cell_content == "":
         return CellContentType.EMPTY
 
-    if is_white:
-        if cell_content == cell_content.lower():
-            return CellContentType.ENEMY
-        else:
-            return CellContentType.FRIEND
-    else:
-        if cell_content == cell_content.upper():
-            return CellContentType.ENEMY
-        else:
-            return CellContentType.FRIEND
+    if (is_white and cell_content == cell_content.lower() or 
+        not is_white and cell_content == cell_content.upper()):
+        return CellContentType.ENEMY
+    return CellContentType.FRIEND
 
 
 def calculate_sliding_moves(board: list[list[str]], position: list[int], is_white: bool, directions: list[tuple[int, int]]) -> list[str]:
@@ -181,9 +175,6 @@ def calculate_pawn_moves(board: list[list[str]], position: list[int], is_white: 
       - capture one square diagonally forward, only if that square holds an ENEMY.
     White moves toward row 0 (up); black moves toward row 7 (down).
 
-    Does NOT yet handle promotion or en passant (both deferred: promotion belongs
-    to move application, en passant needs move history).
-
     Args:
         board: The current board.
         position: The pawn's square as [row, col].
@@ -201,9 +192,11 @@ def calculate_pawn_moves(board: list[list[str]], position: list[int], is_white: 
     start_row = -1
 
     if is_white:
+        promotion_row = 0
         offsets = white_offsets
         start_row = 6
     else:
+        promotion_row = 7
         offsets = black_offsets
         start_row = 1
 
@@ -211,6 +204,9 @@ def calculate_pawn_moves(board: list[list[str]], position: list[int], is_white: 
     if is_position_inbounds([n_row, col]):
         # can pawn move 1 square ahead
         if square_state(board, [n_row, col], is_white) == CellContentType.EMPTY:
+            #if n_row == promotion_row:
+                
+            #else:
             valid_squares.append(indices_to_algebraic([n_row, col]))
 
             # can pawn move 2 squares ahead

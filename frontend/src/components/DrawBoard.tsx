@@ -2,7 +2,7 @@ import { useState } from "react"
 
 interface DrawBoardProps {
     board: string[][]
-    onMove: (fromRow: number, fromCol: number, toRow: number, toCol: number) => void
+    handleMove: (fromRow: number, fromCol: number, toRow: number, toCol: number) => void
     getValidSquares: (from: [number, number]) => Promise<number[][]>
 }
 
@@ -29,7 +29,7 @@ const getPieceImage = (char: string) => {
 }
 
 
-const DrawBoard = ({ board, onMove, getValidSquares }: DrawBoardProps) => {
+const DrawBoard = ({ board, handleMove, getValidSquares }: DrawBoardProps) => {
     const [highlightCells, setHighlightCells] = useState<number[][]>([])
 
     const handleDragStart = async (e: React.DragEvent, row: number, col: number) => {
@@ -56,9 +56,9 @@ const DrawBoard = ({ board, onMove, getValidSquares }: DrawBoardProps) => {
 
             // Prevent moving to the same square
             // Should be handled in the backend, DELETE THIS CHECK
-            if (fromRow === toRow && fromCol === toCol) return
+            //if (fromRow === toRow && fromCol === toCol) return
             
-            onMove(fromRow, fromCol, toRow, toCol)
+            handleMove(fromRow, fromCol, toRow, toCol)
         } catch (err) {
             console.error("Failed to parse drag data", err)
         }

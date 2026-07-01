@@ -106,16 +106,11 @@ def is_move_legal(board: list[list[str]], from_square: str, to_square: str, is_w
     Returns:
         True if the resulting position has the mover's own king safe.
     """
-    # TODO: apply the move to a COPY (apply_move is now pure, so it returns a
-    #       fresh board — your real board is untouched). This is exactly why we
-    #       made apply_move copy.
-    # TODO: on that resulting board, return `not is_in_check(..., is_white)`.
-    # Note: this assumes from->to is already pseudo-legal; this function only
-    # adds the "doesn't expose own king" filter on top.
-    raise NotImplementedError
+    new_board = apply_move(board, from_square, to_square)
+    return not is_in_check(new_board, is_white)
 
 
-def calculate_legal_moves(board: list[list[str]], position: str, is_white: bool) -> list[str]:
+def calculate_legal_moves(board: list[list[str]], position: str, is_whites_turn: bool) -> list[str]:
     """Return the fully-legal moves for the piece on `position`.
 
     Pseudo-legal moves (from moves.py) filtered down to those that don't leave
@@ -125,11 +120,23 @@ def calculate_legal_moves(board: list[list[str]], position: str, is_white: bool)
     Args:
         board: The current board.
         position: The square to generate moves from, in algebraic notation.
-        is_white: True if the piece is white.
+        is_whites_turn: True if it is white's turn.
 
     Returns:
         Legal destination squares in algebraic notation.
     """
-    # TODO: get pseudo-legal moves: calculate_moves(board, position).
-    # TODO: keep only those where is_move_legal(board, position, target, is_white).
-    raise NotImplementedError
+    row, col = algebraic_to_indices(position)
+    piece = board[row][col]
+
+    if not piece:  # ignore empty squares
+        return []
+
+    is_white = piece == piece.upper()
+
+    # if it is whites turn and the piece is not white, return empty
+    # and vice versa for black
+    if is_whites_turn != is_white:
+        return []
+
+    all_moves = calculate_moves(board, position)
+    return [move for move in all_moves if is_move_legal(board, position, move, is_white)]
