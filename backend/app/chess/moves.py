@@ -36,7 +36,7 @@ def is_position_inbounds(position: list[int]) -> bool:
     return True
 
 
-def calculate_moves(board: list[list[str]], position: str) -> list[str]:
+def calculate_moves(board: list[list[str]], position: str, en_passant: str = "-") -> list[str]:
     """Return the pseudo-legal moves for whatever piece sits on `position`.
 
     Dispatches to a per-piece generator based on the piece type. Does not
@@ -70,7 +70,7 @@ def calculate_moves(board: list[list[str]], position: str) -> list[str]:
         case "k":
             possibilities = calculate_stepping_moves(board, [row, col], is_white, KING_QUEEN_DIRECTIONS)
         case "p":
-            possibilities = calculate_pawn_moves(board, [row, col], is_white)
+            possibilities = calculate_pawn_moves(board, [row, col], is_white, en_passant)
     return possibilities
 
 
@@ -164,7 +164,7 @@ def calculate_stepping_moves(board: list[list[str]], position: list[int], is_whi
     return valid_squares
 
 
-def calculate_pawn_moves(board: list[list[str]], position: list[int], is_white: bool) -> list[str]:
+def calculate_pawn_moves(board: list[list[str]], position: list[int], is_white: bool, en_passant: str) -> list[str]:
     """Generate pseudo-legal pawn moves from `position`.
 
     Pawns are the one piece whose movement and capture rules differ, and which
@@ -224,5 +224,20 @@ def calculate_pawn_moves(board: list[list[str]], position: list[int], is_white: 
     if is_position_inbounds([n_row, n_col]):
         if square_state(board, [n_row, n_col], is_white) == CellContentType.ENEMY:
             valid_squares.append(indices_to_algebraic([n_row, n_col]))
+
+    # check if en passant is possible
+    if en_passant != "-":
+        target_row, target_col = algebraic_to_indices(en_passant)
+        
+        # en passant target square is always either in row 2 or 5
+        if target_row == 2 and is_white:
+            if (row - 1 == target_row and col - 1 == target_col or 
+                row - 1 == target_row and col + 1 == target_col):
+                valid_squares.append(en_passant)
+
+        if target_row == 5 and not is_white:
+            if (row + 1 == target_row and col - 1 == target_col or 
+                row + 1 == target_row and col + 1 == target_col):
+                valid_squares.append(en_passant)
 
     return valid_squares

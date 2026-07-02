@@ -148,4 +148,5 @@ def apply_move(board: list[list[str]], from_square: str, to_square: str) -> list
 
     board_copy[to_row][to_col] = board_copy[from_row][from_col]
     board_copy[from_row][from_col] = ""
+
     return board_copy
