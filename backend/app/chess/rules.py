@@ -119,8 +119,7 @@ def calculate_legal_moves(board: list[list[str]], position: str, is_whites_turn:
     """Return the fully-legal moves for the piece on `position`.
 
     Pseudo-legal moves (from moves.py) filtered down to those that don't leave
-    the mover's own king in check. This is what the rest of the app should use
-    for "what can this piece actually do."
+    the mover's own king in check.
 
     Args:
         board: The current board.
@@ -143,8 +142,46 @@ def calculate_legal_moves(board: list[list[str]], position: str, is_whites_turn:
     if is_whites_turn != is_white:
         return []
 
+    # filter all illegal moves away
     all_moves = calculate_moves(board, position, en_passant, castling_rights)
-    return [move for move in all_moves if is_move_legal(board, position, move, is_white)]
+    legal_moves = [move for move in all_moves if is_move_legal(board, position, move, is_white)]
+
+    # filtering castling out of check or through a check
+    # Castling into a check is already dealt with automatically
+    if board[row][col].lower() == "k": # if the moving piece is a king
+        castle_legal_moves = []
+
+        for move in legal_moves:
+            _, to_col = algebraic_to_indices(move)
+            col_difference = abs(col - to_col)
+            if col_difference == 2: # its a castling move
+
+                # can't castle out of a check
+                if is_in_check(board, is_whites_turn):
+                    continue
+
+                # can't castle through a check
+                if to_col > col: # kingside
+                    if is_whites_turn:
+                        if is_square_attacked(board, algebraic_to_indices("f1"), False):
+                            continue
+                    else:
+                        if is_square_attacked(board, algebraic_to_indices("f8"), True):
+                            continue
+                elif to_col < col: # queenside
+                    if is_whites_turn:
+                        if is_square_attacked(board, algebraic_to_indices("d1"), False):
+                            continue
+                    else:
+                        if is_square_attacked(board, algebraic_to_indices("d8"), True):
+                            continue
+                            
+                castle_legal_moves.append(move)
+            else:
+                castle_legal_moves.append(move)
+
+        legal_moves = castle_legal_moves
+    return legal_moves
 
 
 def is_stalemate_or_checkmate(board: list[list[str]], is_whites_turn: bool) -> GameState:

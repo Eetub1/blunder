@@ -15,8 +15,6 @@ function App() {
         const to_square = indicesToAlgebraic([toRow, toCol])
         let content
 
-        // Right now the promoted piece is always a queen
-        // This should be asked on the frontend TODO
         if (promotion) {
             content = {fen, from_square, to_square, promotion: promotion}
         } else {
