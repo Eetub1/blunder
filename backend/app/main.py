@@ -46,7 +46,11 @@ def make_move(req: MoveRequest):
     fen_parts = req.fen.split(" ")
     fen_placement = fen_parts[0]
     fen_tail = fen_parts[1:]
+    castling_rights = fen_parts[2]
     en_passant_target_square = fen_parts[3]
+
+    print(f"From: {req.from_square}")
+    print(f"To: {req.to_square}")
 
     try:
         board = parse_fen(fen_placement)
@@ -56,19 +60,22 @@ def make_move(req: MoveRequest):
         moving_piece = board[from_row][from_col].lower()
 
         # validating the move
-        legal_targets = calculate_legal_moves(board, req.from_square, is_whites_turn, en_passant_target_square)
+        legal_targets = calculate_legal_moves(board, req.from_square, is_whites_turn, en_passant_target_square, castling_rights)
+        print(f"Legal targets: {legal_targets}")
         if req.to_square not in legal_targets:
             return MoveResponse(fen=original_fen, legal=False)
 
         # we apply the move to the board (Just naively moving the piece from start to end)
         board = apply_move(board, req.from_square, req.to_square)
 
+        #============PROMOTION=============================
+
         # if the move is a promotion, put the correct promoted piece on board
         if req.promotion:
             row, col = algebraic_to_indices(req.to_square)
             board[row][col] = req.promotion
 
-        # en passant logic
+        #============EN PASSANT LOGIC=====================
         # clearing the piece captured by en passant. This has to be handled here
         if moving_piece == "p" and req.to_square == en_passant_target_square:
             board[from_row][to_col] = ""
@@ -80,6 +87,44 @@ def make_move(req: MoveRequest):
             fen_tail[2] = indices_to_algebraic([skipped_row, from_col])
         else:
             fen_tail[2] = "-"
+
+        #============CASTLING==============================
+        # moving the rook to the right place, because apply_move only moves the king
+        if moving_piece == "k":
+            if abs(from_col - to_col) == 2: # move is a castle
+
+                if req.to_square == "g1":
+                    board = apply_move(board, "h1", "f1")
+                elif req.to_square == "c1":
+                    board = apply_move(board, "a1", "d1")
+                elif req.to_square == "g8":
+                    board = apply_move(board, "h8", "f8")
+                elif req.to_square == "c8":
+                    board = apply_move(board, "a8", "d8")
+
+        # removing the castling rights
+        castling_part = fen_tail[1]
+
+        if moving_piece == "k":
+            if is_whites_turn:
+                castling_part = castling_part.replace("K", "").replace("Q", "")
+            else:
+                castling_part = castling_part.replace("k", "").replace("q", "")
+
+        if moving_piece == "r":
+            if req.from_square == "a1": castling_part = castling_part.replace("Q", "")
+            elif req.from_square == "h1": castling_part = castling_part.replace("K", "")
+            elif req.from_square == "a8": castling_part = castling_part.replace("q", "")
+            elif req.from_square == "h8": castling_part = castling_part.replace("k", "")
+
+        # fixes an edge case where a rook is captured in its homesquare
+        if req.to_square == "a1": castling_part = castling_part.replace("Q", "")
+        elif req.to_square == "h1": castling_part = castling_part.replace("K", "")
+        elif req.to_square == "a8": castling_part = castling_part.replace("q", "")
+        elif req.to_square == "h8": castling_part = castling_part.replace("k", "")
+
+        # empty castling right part should be '-' 
+        fen_tail[1] = castling_part if castling_part != "" else "-"
 
         # rebuilding the fen string
         fen = to_fen(board) + " " + " ".join(fen_tail)
