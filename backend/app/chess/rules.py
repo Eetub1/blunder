@@ -115,7 +115,7 @@ def is_move_legal(board: list[list[str]], from_square: str, to_square: str, is_w
     return not is_in_check(new_board, is_white)
 
 
-def calculate_legal_moves(board: list[list[str]], position: str, is_whites_turn: bool, en_passant: str ="-") -> list[str]:
+def calculate_legal_moves(board: list[list[str]], position: str, is_whites_turn: bool, en_passant: str ="-", castling_rights: str = "-") -> list[str]:
     """Return the fully-legal moves for the piece on `position`.
 
     Pseudo-legal moves (from moves.py) filtered down to those that don't leave
@@ -143,7 +143,7 @@ def calculate_legal_moves(board: list[list[str]], position: str, is_whites_turn:
     if is_whites_turn != is_white:
         return []
 
-    all_moves = calculate_moves(board, position, en_passant)
+    all_moves = calculate_moves(board, position, en_passant, castling_rights)
     return [move for move in all_moves if is_move_legal(board, position, move, is_white)]
 
 

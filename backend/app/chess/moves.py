@@ -36,7 +36,7 @@ def is_position_inbounds(position: list[int]) -> bool:
     return True
 
 
-def calculate_moves(board: list[list[str]], position: str, en_passant: str = "-") -> list[str]:
+def calculate_moves(board: list[list[str]], position: str, en_passant: str = "-", castling_rights: str = "-") -> list[str]:
     """Return the pseudo-legal moves for whatever piece sits on `position`.
 
     Dispatches to a per-piece generator based on the piece type. Does not
@@ -68,7 +68,7 @@ def calculate_moves(board: list[list[str]], position: str, en_passant: str = "-"
         case "q":
             possibilities = calculate_sliding_moves(board, [row, col], is_white, KING_QUEEN_DIRECTIONS)
         case "k":
-            possibilities = calculate_stepping_moves(board, [row, col], is_white, KING_QUEEN_DIRECTIONS)
+            possibilities = calculate_king_moves(board, [row, col], is_white, castling_rights)
         case "p":
             possibilities = calculate_pawn_moves(board, [row, col], is_white, en_passant)
     return possibilities
@@ -95,6 +95,47 @@ def square_state(board: list[list[str]], position: list[int], is_white: bool) ->
         not is_white and cell_content == cell_content.upper()):
         return CellContentType.ENEMY
     return CellContentType.FRIEND
+
+
+def calculate_king_moves(board: list[list[str]], position: list[int], is_white: bool, castling_rights: str) -> list[str]:
+    # calculate where the king can move normally
+    valid_squares = calculate_stepping_moves(board, position, is_white, KING_QUEEN_DIRECTIONS)
+
+    if castling_rights == "-":
+        return valid_squares
+
+    if is_white:
+        # kingside castling for white
+        if "K" in castling_rights:
+            f1 = square_state(board, algebraic_to_indices("f1"), is_white)
+            g1 = square_state(board, algebraic_to_indices("g1"), is_white)
+            if f1 == g1 and g1 == CellContentType.EMPTY:
+                valid_squares.append("g1")
+
+        # queenside
+        if "Q" in castling_rights:
+            b1 = square_state(board, algebraic_to_indices("b1"), is_white)
+            c1 = square_state(board, algebraic_to_indices("c1"), is_white)
+            d1 = square_state(board, algebraic_to_indices("d1"), is_white)
+            if b1 == c1 and c1 == d1 and d1 == CellContentType.EMPTY:
+                valid_squares.append("c1")
+
+    else:
+        # kingside castling for black
+        if "k" in castling_rights:
+            f8 = square_state(board, algebraic_to_indices("f8"), is_white)
+            g8 = square_state(board, algebraic_to_indices("g8"), is_white)
+            if f8 == g8 and g8 == CellContentType.EMPTY:
+                valid_squares.append("g8")
+
+        # queenside
+        if "q" in castling_rights:
+            b8 = square_state(board, algebraic_to_indices("b8"), is_white)
+            c8 = square_state(board, algebraic_to_indices("c8"), is_white)
+            d8 = square_state(board, algebraic_to_indices("d8"), is_white)
+            if b8 == c8 and c8 == d8 and d8 == CellContentType.EMPTY:
+                valid_squares.append("c8")
+    return valid_squares
 
 
 def calculate_sliding_moves(board: list[list[str]], position: list[int], is_white: bool, directions: list[tuple[int, int]]) -> list[str]:

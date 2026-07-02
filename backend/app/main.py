@@ -102,9 +102,10 @@ def get_valid_squares(req: ValidSquaresRequest):
         fen_parts = req.fen.split(" ")
         board = parse_fen(fen_parts[0])
         is_whites_turn = fen_parts[1].lower() == "w"
+        castling_rights = fen_parts[2]
         en_passant = fen_parts[3]
 
-        valid_squares = calculate_legal_moves(board, req.square, is_whites_turn, en_passant)
+        valid_squares = calculate_legal_moves(board, req.square, is_whites_turn, en_passant, castling_rights)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
     
