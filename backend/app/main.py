@@ -49,9 +49,6 @@ def make_move(req: MoveRequest):
     castling_rights = fen_parts[2]
     en_passant_target_square = fen_parts[3]
 
-    print(f"From: {req.from_square}")
-    print(f"To: {req.to_square}")
-
     try:
         board = parse_fen(fen_placement)
         is_whites_turn = fen_parts[1].lower() == "w"
@@ -61,7 +58,6 @@ def make_move(req: MoveRequest):
 
         # validating the move
         legal_targets = calculate_legal_moves(board, req.from_square, is_whites_turn, en_passant_target_square, castling_rights)
-        print(f"Legal targets: {legal_targets}")
         if req.to_square not in legal_targets:
             return MoveResponse(fen=original_fen, legal=False)
 

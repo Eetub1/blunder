@@ -9,7 +9,7 @@ Key distinction this module enforces:
 """
 
 from app.chess.board import apply_move, indices_to_algebraic, algebraic_to_indices
-from app.chess.moves import calculate_moves, is_position_inbounds, square_state, CellContentType
+from app.chess.moves import calculate_moves, is_position_inbounds
 from enum import Enum
 
 class GameState(Enum):

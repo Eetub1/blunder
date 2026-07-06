@@ -1,4 +1,4 @@
-/*Some of the UI parts are AI generated*/
+/*Some of the UI styles are AI generated*/
 
 import { useState } from "react"
 import type { PendingPromotion } from "../types/types"
