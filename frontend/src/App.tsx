@@ -58,10 +58,17 @@ function App() {
             })
     }
 
+    const turn = fen.split(" ")[1] === "w" ? "White" : "Black"
+
 
     return (
         <>
             <DrawBoard board={parseFen(fen)} handleMove={handleMove} getValidSquares={getValidSquares}/>
+            <div>
+                <h2>Debug section:</h2>
+                <div>Fen string {fen}</div>
+                <div>Turn: {turn}</div>
+            </div>
         </>
     )
 }

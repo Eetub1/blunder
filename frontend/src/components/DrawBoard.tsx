@@ -35,6 +35,7 @@ const getPieceImage = (char: string) => {
 const DrawBoard = ({ board, handleMove, getValidSquares }: DrawBoardProps) => {
     const [highlightCells, setHighlightCells] = useState<number[][]>([])
     const [pendingPromotion, setPendingPromotion] = useState<PendingPromotion | null>(null)
+    const [isBoardFlipped, setIsBoardFlipped] = useState(false)
 
     const handleDragStart = async (e: React.DragEvent, row: number, col: number) => {
         e.dataTransfer.setData("text/plain", JSON.stringify({ row, col }))
@@ -89,35 +90,68 @@ const DrawBoard = ({ board, handleMove, getValidSquares }: DrawBoardProps) => {
 
     const promotionChoices = ["q", "r", "b", "n"]
 
+
+
     return (
         <div id="boardContainer">
+            <button onClick={() => {setIsBoardFlipped(!isBoardFlipped)}}>flip board</button>
+            <div>Is board flipped: {isBoardFlipped ? "Yes" : "No"}</div>
+            
             {board.map((row, rowIndex) => (
                 <div key={rowIndex} style={{ display: "flex" }}>
                     {row.map((cell, colIndex) => {
                         const imgSrc = getPieceImage(cell)
                         const isLightSquare = (rowIndex + colIndex) % 2 === 0
 
+                        // calculate if cell needs a col or row indicator
+                        const showRank = colIndex === 0
+                        const showFile = rowIndex === 7
+                        const rankLabel = 8 - rowIndex
+                        const fileLabel = "abcdefgh"[colIndex]
+                        const labelColor = isLightSquare ? "#769656" : "#eeeed2"
+
+                        // returns an individual cell
                         return (
-                            <div className={highlightCells.some(([r, c]) => r === rowIndex && c === colIndex) ? "highlight" : ""}
-                                key={colIndex} 
+                            <div
+                                className={highlightCells.some(([r, c]) => r === rowIndex && c === colIndex) ? "highlight" : ""}
+                                key={colIndex}
                                 onDragOver={handleDragOver}
                                 onDrop={(e) => handleDrop(e, rowIndex, colIndex)}
-                                style={{ 
-                                    display: "flex", 
-                                    justifyContent: "center", 
-                                    alignItems: "center", 
-                                    width: CELL_SIZE, 
-                                    height: CELL_SIZE, 
+                                style={{
+                                    position: "relative",
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                    width: CELL_SIZE,
+                                    height: CELL_SIZE,
                                     backgroundColor: isLightSquare ? "#eeeed2" : "#769656"
                                 }}
                             >
+                                {showRank && (
+                                    <span style={{
+                                        position: "absolute", top: 2, left: 3,
+                                        fontSize: 12, fontWeight: "bold",
+                                        color: labelColor, userSelect: "none"
+                                    }}>
+                                        {rankLabel}
+                                    </span>
+                                )}
+                                {showFile && (
+                                    <span style={{
+                                        position: "absolute", bottom: 2, right: 3,
+                                        fontSize: 12, fontWeight: "bold",
+                                        color: labelColor, userSelect: "none"
+                                    }}>
+                                        {fileLabel}
+                                    </span>
+                                )}
                                 {imgSrc && (
-                                    <img 
-                                        src={imgSrc} 
-                                        alt={cell} 
+                                    <img
+                                        src={imgSrc}
+                                        alt={cell}
                                         draggable={true}
                                         onDragStart={(e) => handleDragStart(e, rowIndex, colIndex)}
-                                        style={{ width: "100%", height: "100%", cursor: "grab" }} 
+                                        style={{ width: "100%", height: "100%", cursor: "grab" }}
                                     />
                                 )}
                             </div>
