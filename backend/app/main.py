@@ -30,6 +30,8 @@ class MoveResponse(BaseModel):
     fen: str
     legal: bool
     game_state: GameState | GameState = GameState.ONGOING
+    from_square: str | str = "" # these are empty if the move was not valid
+    to_square: str | str = ""
 
 class ValidSquaresRequest(BaseModel):
     fen: str
@@ -128,11 +130,10 @@ def make_move(req: MoveRequest):
         # has game ended
         game_result = is_stalemate_or_checkmate(board, not is_whites_turn)
         print(game_result)
-
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-    return MoveResponse(fen=fen, legal=True, game_state=game_result)
+    return MoveResponse(fen=fen, legal=True, game_state=game_result, from_square=req.from_square, to_square=req.to_square)
 
 
 @app.post("/api/moves", response_model=ValidSquaresResponse)

@@ -13,6 +13,8 @@ const START = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
 function App() {
     const [fen, setFen] = useState(START)
     const [gameState, setGameState] = useState(GameState.ONGOING)
+    const [fromSquare, setFromSquare] = useState("")
+    const [toSquare, setToSquare] = useState("")
 
     const handleMove = (fromRow: number, fromCol: number, toRow: number, toCol: number, promotion: string) => {
         const from_square = indicesToAlgebraic([fromRow, fromCol])
@@ -40,6 +42,9 @@ function App() {
                     if (data.game_state !== GameState.ONGOING) {
                         setGameState(data.game_state)
                     }
+
+                    setFromSquare(data.from_square)
+                    setToSquare(data.to_square)
 
                 } else {
                     console.error("Invalid response from backend: ", data)
@@ -76,7 +81,9 @@ function App() {
                 board={parseFen(fen)} 
                 handleMove={handleMove} 
                 getValidSquares={getValidSquares}
-                gameState={gameState}/>
+                gameState={gameState}
+                fromSquare={fromSquare}
+                toSquare={toSquare}/>
             <div>
                 <h2>Debug section:</h2>
                 <div>Fen string {fen}</div>

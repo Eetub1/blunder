@@ -2,12 +2,15 @@
 
 import { useState } from "react"
 import { type PendingPromotion, GameState } from "../types"
+import algebraicToIndices from "../utils/algebraicToIndices"
 
 interface DrawBoardProps {
     board: string[][]
     handleMove: (fromRow: number, fromCol: number, toRow: number, toCol: number, promotion: string) => void
     getValidSquares: (from: [number, number]) => Promise<number[][]>
     gameState: GameState
+    fromSquare: string
+    toSquare: string
 }
 
 const CELL_SIZE = 64
@@ -34,7 +37,7 @@ const getPieceImage = (char: string) => {
 }
 
 
-const DrawBoard = ({ board, handleMove, getValidSquares, gameState }: DrawBoardProps) => {
+const DrawBoard = ({ board, handleMove, getValidSquares, gameState, fromSquare, toSquare }: DrawBoardProps) => {
     const [highlightCells, setHighlightCells] = useState<number[][]>([])
     const [pendingPromotion, setPendingPromotion] = useState<PendingPromotion | null>(null)
     const [isBoardFlipped, setIsBoardFlipped] = useState(false)
@@ -92,123 +95,133 @@ const DrawBoard = ({ board, handleMove, getValidSquares, gameState }: DrawBoardP
 
     const promotionChoices = ["q", "r", "b", "n"]
 
+    const [ validFromRow, validFromCol ] = algebraicToIndices(fromSquare)
+    const [ validToRow, validToCol ] = algebraicToIndices(toSquare)
+
     // these are iterated over. Easy way to flip the board
     const indexes = isBoardFlipped ? [7,6,5,4,3,2,1,0] : [0,1,2,3,4,5,6,7]
 
     return (
-        <div id="boardContainer">
-            <button onClick={() => {setIsBoardFlipped(!isBoardFlipped)}}>flip board</button>
-            <div>Is board flipped: {isBoardFlipped ? "Yes" : "No"}</div>
-            
-            {indexes.map((rowIndex) => (
-                <div key={rowIndex} style={{ display: "flex" }}>
-                    {indexes.map((colIndex) => {
-                        const cell = board[rowIndex][colIndex]
-                        const imgSrc = getPieceImage(cell)
-                        const isLightSquare = (rowIndex + colIndex) % 2 === 0
+        <>
+            <div>
+                <button onClick={() => {setIsBoardFlipped(!isBoardFlipped)}}>flip board</button>
+                <div>Is board flipped: {isBoardFlipped ? "Yes" : "No"}</div>
+            </div>
 
-                        // calculate if cell needs a col or row indicator
-                        const showRank = colIndex === 0
-                        const showFile = rowIndex === 7
-                        const rankLabel = 8 - rowIndex
-                        const fileLabel = "abcdefgh"[colIndex]
-                        const labelColor = isLightSquare ? "#769656" : "#eeeed2"
+            <div id="boardContainer">
+                {indexes.map((rowIndex) => (
+                    <div key={rowIndex} style={{ display: "flex" }}>
+                        {indexes.map((colIndex) => {
+                            const cell = board[rowIndex][colIndex]
+                            const imgSrc = getPieceImage(cell)
+                            const isLightSquare = (rowIndex + colIndex) % 2 === 0
 
-                        // returns an individual cell
-                        return (
-                            <div
-                                className={highlightCells.some(([r, c]) => r === rowIndex && c === colIndex) ? "highlight" : ""}
-                                key={colIndex}
-                                onDragOver={handleDragOver}
-                                onDrop={(e) => handleDrop(e, rowIndex, colIndex)}
-                                style={{
-                                    position: "relative",
-                                    display: "flex",
-                                    justifyContent: "center",
-                                    alignItems: "center",
-                                    width: CELL_SIZE,
-                                    height: CELL_SIZE,
-                                    backgroundColor: isLightSquare ? "#eeeed2" : "#769656"
-                                }}
-                            >
-                                {showRank && (
-                                    <span style={{
-                                        position: "absolute", top: 2, left: 3,
-                                        fontSize: 12, fontWeight: "bold",
-                                        color: labelColor, userSelect: "none"
-                                    }}>
-                                        {rankLabel}
-                                    </span>
-                                )}
-                                {showFile && (
-                                    <span style={{
-                                        position: "absolute", bottom: 2, right: 3,
-                                        fontSize: 12, fontWeight: "bold",
-                                        color: labelColor, userSelect: "none"
-                                    }}>
-                                        {fileLabel}
-                                    </span>
-                                )}
-                                {imgSrc && (
-                                    <img
-                                        src={imgSrc}
-                                        alt={cell}
-                                        draggable={true}
-                                        onDragStart={(e) => handleDragStart(e, rowIndex, colIndex)}
-                                        style={{ width: "100%", height: "100%", cursor: "grab" }}
-                                    />
-                                )}
-                            </div>
-                        )
-                    })}
-                </div>
-            ))}
+                            // calculate if cell needs a col or row indicator
+                            const showRank = colIndex === 0
+                            const showFile = rowIndex === 7
+                            const rankLabel = 8 - rowIndex
+                            const fileLabel = "abcdefgh"[colIndex]
+                            const labelColor = isLightSquare ? "#769656" : "#eeeed2"
 
-            {pendingPromotion && (
-                <>
-                    <div style={{position: "absolute", inset: 0, backgroundColor: "rgba(0,0,0,0.4)"}}></div>
-                    <div
-                        style={{
-                            position: "absolute", top: "50%", left: "50%",
-                            transform: "translate(-50%, -50%)",
-                            display: "flex", gap: 8, padding: 12,
-                            backgroundColor: "#fff", borderRadius: 8,
-                            boxShadow: "0 4px 16px rgba(0,0,0,0.3)"
-                        }}
-                    >
-                        {promotionChoices.map((type) => {
-                            const displayChar = pendingPromotion.isWhite ? type.toUpperCase() : type
+                            // returns an individual cell
                             return (
-                                <img
-                                    key={type}
-                                    src={getPieceImage(displayChar)}
-                                    alt={displayChar}
-                                    onClick={() => choosePromotion(type)}
-                                    style={{ width: CELL_SIZE, height: CELL_SIZE, cursor: "pointer" }}
-                                />
+                                <div
+                                    className={`
+                                        ${highlightCells.some(([r, c]) => r === rowIndex && c === colIndex) ? "highlight" : ""} 
+                                        ${(rowIndex === validFromRow && colIndex === validFromCol) ? "lastMove" : ""}
+                                        ${(rowIndex === validToRow && colIndex === validToCol) ? "lastMove" : ""}`}
+                                    key={colIndex}
+                                    onDragOver={handleDragOver}
+                                    onDrop={(e) => handleDrop(e, rowIndex, colIndex)}
+                                    style={{
+                                        position: "relative",
+                                        display: "flex",
+                                        justifyContent: "center",
+                                        alignItems: "center",
+                                        width: CELL_SIZE,
+                                        height: CELL_SIZE,
+                                        backgroundColor: isLightSquare ? "#eeeed2" : "#769656"
+                                    }}
+                                >
+                                    {showRank && (
+                                        <span style={{
+                                            position: "absolute", top: 2, left: 3,
+                                            fontSize: 12, fontWeight: "bold",
+                                            color: labelColor, userSelect: "none"
+                                        }}>
+                                            {rankLabel}
+                                        </span>
+                                    )}
+                                    {showFile && (
+                                        <span style={{
+                                            position: "absolute", bottom: 2, right: 3,
+                                            fontSize: 12, fontWeight: "bold",
+                                            color: labelColor, userSelect: "none"
+                                        }}>
+                                            {fileLabel}
+                                        </span>
+                                    )}
+                                    {imgSrc && (
+                                        <img
+                                            src={imgSrc}
+                                            alt={cell}
+                                            draggable={true}
+                                            onDragStart={(e) => handleDragStart(e, rowIndex, colIndex)}
+                                            style={{ width: "100%", height: "100%", cursor: "grab" }}
+                                        />
+                                    )}
+                                </div>
                             )
                         })}
                     </div>
-                </>
-            )}
+                ))}
 
-            {gameState !== GameState.ONGOING && (
-                <>
-                    <div style={{position: "absolute", inset: 0, backgroundColor: "rgba(0,0,0,0.4)"}}></div>
-                    <div
-                        style={{
-                            position: "absolute", top: "50%", left: "50%",
-                            transform: "translate(-50%, -50%)",
-                            display: "flex", gap: 8, padding: 12,
-                            backgroundColor: "#fff", borderRadius: 8,
-                            boxShadow: "0 4px 16px rgba(0,0,0,0.3)"
-                        }}
-                    >
-                        <div>Game ended: {gameState}</div>
-                    </div>
-                </>
-            )}
-        </div>
+                {pendingPromotion && (
+                    <>
+                        <div style={{position: "absolute", inset: 0, backgroundColor: "rgba(0,0,0,0.4)"}}></div>
+                        <div
+                            style={{
+                                position: "absolute", top: "50%", left: "50%",
+                                transform: "translate(-50%, -50%)",
+                                display: "flex", gap: 8, padding: 12,
+                                backgroundColor: "#fff", borderRadius: 8,
+                                boxShadow: "0 4px 16px rgba(0,0,0,0.3)"
+                            }}
+                        >
+                            {promotionChoices.map((type) => {
+                                const displayChar = pendingPromotion.isWhite ? type.toUpperCase() : type
+                                return (
+                                    <img
+                                        key={type}
+                                        src={getPieceImage(displayChar)}
+                                        alt={displayChar}
+                                        onClick={() => choosePromotion(type)}
+                                        style={{ width: CELL_SIZE, height: CELL_SIZE, cursor: "pointer" }}
+                                    />
+                                )
+                            })}
+                        </div>
+                    </>
+                )}
+
+                {gameState !== GameState.ONGOING && (
+                    <>
+                        <div style={{position: "absolute", inset: 0, backgroundColor: "rgba(0,0,0,0.4)"}}></div>
+                        <div
+                            style={{
+                                position: "absolute", top: "50%", left: "50%",
+                                transform: "translate(-50%, -50%)",
+                                display: "flex", gap: 8, padding: 12,
+                                backgroundColor: "#fff", borderRadius: 8,
+                                boxShadow: "0 4px 16px rgba(0,0,0,0.3)"
+                            }}
+                        >
+                            <div>Game ended: {gameState}</div>
+                        </div>
+                    </>
+                )}
+            </div>
+        </>
     )
 }
 
