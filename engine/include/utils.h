@@ -1,0 +1,1 @@
+void print_board(Piece *board, int length);
