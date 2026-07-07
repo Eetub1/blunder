@@ -8,3 +8,10 @@ export type PendingPromotion = {
     toCol: number
     isWhite: boolean
 }
+
+export enum GameState {
+    ONGOING = "ongoing",
+    CHECKMATE = "checkmate",
+    STALEMATE = "stalemate",
+    DRAW = "draw"
+}

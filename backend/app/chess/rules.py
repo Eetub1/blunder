@@ -16,6 +16,7 @@ class GameState(Enum):
     ONGOING = "ongoing"
     CHECKMATE = "checkmate"
     STALEMATE = "stalemate"
+    DRAW = "draw"
 
 def find_king(board: list[list[str]], is_white: bool) -> list[int]:
     """Locate the given side's king on the board.

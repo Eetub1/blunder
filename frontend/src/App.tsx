@@ -4,11 +4,15 @@ import parseFen from "./utils/parseFen"
 import indicesToAlgebraic from "./utils/indicesToAlgebraic"
 import algebraicToIndices from "./utils/algebraicToIndices"
 
+import { GameState } from "./types"
+
 // Starting position in FEN notation
 const START = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
 
+
 function App() {
     const [fen, setFen] = useState(START)
+    const [gameState, setGameState] = useState(GameState.ONGOING)
 
     const handleMove = (fromRow: number, fromCol: number, toRow: number, toCol: number, promotion: string) => {
         const from_square = indicesToAlgebraic([fromRow, fromCol])
@@ -32,6 +36,11 @@ function App() {
             .then(data => {
                 if (data.fen) {
                     setFen(data.fen)
+
+                    if (data.game_state !== GameState.ONGOING) {
+                        setGameState(data.game_state)
+                    }
+
                 } else {
                     console.error("Invalid response from backend: ", data)
                 }
@@ -63,11 +72,16 @@ function App() {
 
     return (
         <>
-            <DrawBoard board={parseFen(fen)} handleMove={handleMove} getValidSquares={getValidSquares}/>
+            <DrawBoard 
+                board={parseFen(fen)} 
+                handleMove={handleMove} 
+                getValidSquares={getValidSquares}
+                gameState={gameState}/>
             <div>
                 <h2>Debug section:</h2>
                 <div>Fen string {fen}</div>
                 <div>Turn: {turn}</div>
+                <div>Gamestate: {gameState}</div>
             </div>
         </>
     )

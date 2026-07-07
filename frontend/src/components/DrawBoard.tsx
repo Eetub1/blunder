@@ -1,12 +1,13 @@
 /*Some of the UI styles are AI generated*/
 
 import { useState } from "react"
-import type { PendingPromotion } from "../types/types"
+import { type PendingPromotion, GameState } from "../types"
 
 interface DrawBoardProps {
     board: string[][]
     handleMove: (fromRow: number, fromCol: number, toRow: number, toCol: number, promotion: string) => void
     getValidSquares: (from: [number, number]) => Promise<number[][]>
+    gameState: GameState
 }
 
 const CELL_SIZE = 64
@@ -14,6 +15,7 @@ const CELL_SIZE = 64
 const getPieceImage = (char: string) => {
     if (!char) return undefined // Return undefined for empty cells
 
+    // TODO, get these some otherway, dont hotlink them
     switch (char) {
         case "P": return "https://upload.wikimedia.org/wikipedia/commons/4/45/Chess_plt45.svg"
         case "N": return "https://upload.wikimedia.org/wikipedia/commons/7/70/Chess_nlt45.svg"
@@ -32,7 +34,7 @@ const getPieceImage = (char: string) => {
 }
 
 
-const DrawBoard = ({ board, handleMove, getValidSquares }: DrawBoardProps) => {
+const DrawBoard = ({ board, handleMove, getValidSquares, gameState }: DrawBoardProps) => {
     const [highlightCells, setHighlightCells] = useState<number[][]>([])
     const [pendingPromotion, setPendingPromotion] = useState<PendingPromotion | null>(null)
     const [isBoardFlipped, setIsBoardFlipped] = useState(false)
@@ -90,16 +92,18 @@ const DrawBoard = ({ board, handleMove, getValidSquares }: DrawBoardProps) => {
 
     const promotionChoices = ["q", "r", "b", "n"]
 
-
+    // these are iterated over. Easy way to flip the board
+    const indexes = isBoardFlipped ? [7,6,5,4,3,2,1,0] : [0,1,2,3,4,5,6,7]
 
     return (
         <div id="boardContainer">
             <button onClick={() => {setIsBoardFlipped(!isBoardFlipped)}}>flip board</button>
             <div>Is board flipped: {isBoardFlipped ? "Yes" : "No"}</div>
             
-            {board.map((row, rowIndex) => (
+            {indexes.map((rowIndex) => (
                 <div key={rowIndex} style={{ display: "flex" }}>
-                    {row.map((cell, colIndex) => {
+                    {indexes.map((colIndex) => {
+                        const cell = board[rowIndex][colIndex]
                         const imgSrc = getPieceImage(cell)
                         const isLightSquare = (rowIndex + colIndex) % 2 === 0
 
@@ -184,6 +188,23 @@ const DrawBoard = ({ board, handleMove, getValidSquares }: DrawBoardProps) => {
                                 />
                             )
                         })}
+                    </div>
+                </>
+            )}
+
+            {gameState !== GameState.ONGOING && (
+                <>
+                    <div style={{position: "absolute", inset: 0, backgroundColor: "rgba(0,0,0,0.4)"}}></div>
+                    <div
+                        style={{
+                            position: "absolute", top: "50%", left: "50%",
+                            transform: "translate(-50%, -50%)",
+                            display: "flex", gap: 8, padding: 12,
+                            backgroundColor: "#fff", borderRadius: 8,
+                            boxShadow: "0 4px 16px rgba(0,0,0,0.3)"
+                        }}
+                    >
+                        <div>Game ended: {gameState}</div>
                     </div>
                 </>
             )}
