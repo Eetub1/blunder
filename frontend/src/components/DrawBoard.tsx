@@ -4,6 +4,19 @@ import { useState } from "react"
 import { type PendingPromotion, GameState } from "../types"
 import algebraicToIndices from "../utils/algebraicToIndices"
 
+import whitePawn from "../assets/pieces/P.svg"
+import blackPawn from "../assets/pieces/p.svg"
+import whiteKnight from "../assets/pieces/N.svg"
+import blackKnight from "../assets/pieces/n.svg"
+import whiteBishop from "../assets/pieces/B.svg"
+import blackBishop from "../assets/pieces/b.svg"
+import whiteRook from "../assets/pieces/R.svg"
+import blackRook from "../assets/pieces/r.svg"
+import whiteQueen from "../assets/pieces/Q.svg"
+import blackQueen from "../assets/pieces/q.svg"
+import whiteKing from "../assets/pieces/K.svg"
+import blackKing from "../assets/pieces/k.svg"
+
 interface DrawBoardProps {
     board: string[][]
     handleMove: (fromRow: number, fromCol: number, toRow: number, toCol: number, promotion: string) => void
@@ -20,18 +33,18 @@ const getPieceImage = (char: string) => {
 
     // TODO, get these some otherway, dont hotlink them
     switch (char) {
-        case "P": return "https://upload.wikimedia.org/wikipedia/commons/4/45/Chess_plt45.svg"
-        case "N": return "https://upload.wikimedia.org/wikipedia/commons/7/70/Chess_nlt45.svg"
-        case "B": return "https://upload.wikimedia.org/wikipedia/commons/b/b1/Chess_blt45.svg"
-        case "R": return "https://upload.wikimedia.org/wikipedia/commons/7/72/Chess_rlt45.svg"
-        case "Q": return "https://upload.wikimedia.org/wikipedia/commons/1/15/Chess_qlt45.svg"
-        case "K": return "https://upload.wikimedia.org/wikipedia/commons/4/42/Chess_klt45.svg"
-        case "p": return "https://upload.wikimedia.org/wikipedia/commons/c/c7/Chess_pdt45.svg"
-        case "n": return "https://upload.wikimedia.org/wikipedia/commons/e/ef/Chess_ndt45.svg"
-        case "b": return "https://upload.wikimedia.org/wikipedia/commons/9/98/Chess_bdt45.svg"
-        case "r": return "https://upload.wikimedia.org/wikipedia/commons/f/ff/Chess_rdt45.svg"
-        case "q": return "https://upload.wikimedia.org/wikipedia/commons/4/47/Chess_qdt45.svg"
-        case "k": return "https://upload.wikimedia.org/wikipedia/commons/f/f0/Chess_kdt45.svg"
+        case "P": return whitePawn
+        case "N": return whiteKnight
+        case "B": return whiteBishop
+        case "R": return whiteRook
+        case "Q": return whiteQueen
+        case "K": return whiteKing
+        case "p": return blackPawn
+        case "n": return blackKnight
+        case "b": return blackBishop
+        case "r": return blackRook
+        case "q": return blackQueen
+        case "k": return blackKing
         default: return undefined
     }
 }
