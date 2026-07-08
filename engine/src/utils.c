@@ -38,6 +38,7 @@ void print_board(Piece *board, int length) {
             printf("\n");
         }
     }
+    printf("\n");
 }
 
 

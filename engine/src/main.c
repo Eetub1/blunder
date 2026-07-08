@@ -3,7 +3,6 @@
 #include "utils.h"
 #include "board.h"
 
-// const char STARTING_FEN[] = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
 int main(void) {
     printf("Program starting.\n");
@@ -18,11 +17,18 @@ int main(void) {
         WP, WP, WP, WP, WP, WP, WP, WP,
         WR, WN, WB, WQ, WK, WB, WN, WR
     };
-    char *from = "e2";
-    char *to = "e4";
+    
+    char *from = "d1";
+    char *to = "d5";
+
+    Undo undo;
 
     print_board(start, 64);
-    make_move(start, from, to);
+
+    make_move(start, from, to, &undo);
+    print_board(start, 64);
+
+    unmake_move(start, &undo);
     print_board(start, 64);
 
     return 0;
