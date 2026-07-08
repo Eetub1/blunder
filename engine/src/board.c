@@ -10,7 +10,7 @@
  * @param undo  Struct to hold information about the move so that it can be reversed if necessary
  * @return Piece what was on the square that was overwritten 
  */
-void make_move(BoardState *state, char* from, char* to, Undo *undo) {
+void make_move(BoardState *state, char *from, char *to, Undo *undo) {
     int from_square = algebraic_to_index(from);
     int to_square = algebraic_to_index(to);
 

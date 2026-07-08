@@ -42,7 +42,7 @@ void print_board(Piece *board, int length) {
 }
 
 
-int algebraic_to_index(char* position) {
+int algebraic_to_index(char *position) {
     char col = *position;
     char row = *(position + 1);
     return ('8' - row) * 8 + (col - 'a');

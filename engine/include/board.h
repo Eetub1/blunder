@@ -17,9 +17,7 @@ typedef struct {
     char castling_rights[4]; // "KQkq"
 } BoardState;
 
-
-
-void make_move(BoardState *state, char* from, char* to, Undo *undo);
+void make_move(BoardState *state, char *from, char *to, Undo *undo);
 void unmake_move(BoardState *state, Undo *undo);
 
 #endif
