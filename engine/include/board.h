@@ -10,7 +10,16 @@ typedef struct {
     int to_square;
 } Undo;
 
-void make_move(Piece *board, char* from, char* to, Undo *undo);
-void unmake_move(Piece *board, Undo *undo);
+typedef struct {
+    Piece board[64];
+    Color whose_turn;
+    int en_passant_target_square;
+    char castling_rights[4]; // "KQkq"
+} BoardState;
+
+
+
+void make_move(BoardState *state, char* from, char* to, Undo *undo);
+void unmake_move(BoardState *state, Undo *undo);
 
 #endif
