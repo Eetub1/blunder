@@ -29,7 +29,7 @@ void make_move(BoardState *state, char *from, char *to, Undo *undo) {
 
 /**
  * @brief Unmakes the previous made move
- * TODO NOT EVEN CLOSE TO BEING FINISHED
+ *        TODO NOT EVEN CLOSE TO BEING FINISHED
  * @param board The board to modify
  * @param undo  Struct containing info about previous move
  */
@@ -44,9 +44,9 @@ void unmake_move(BoardState *state, Undo *undo) {
 
 /**
  * @brief Returns what type of piece is on the target square relative to the current position
- * @param board Game board
+ * @param board    Game board
  * @param position From what square is a piece moving
- * @param target To what square is a piece moving
+ * @param target   To what square is a piece moving
  * @return SquareContentType Enemy, Friend or Empty
  */
 SquareContentType square_state(Piece *board, int position, int target) {

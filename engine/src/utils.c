@@ -28,7 +28,7 @@ char *piece_to_glyph(Piece p) {
 
 /**
  * @brief Prints the board to the console as an 8x8 grid.
- * @param board 1d array representing the board
+ * @param board  1d array representing the board
  * @param length length of the array (64)
  */
 void print_board(Piece *board, int length) {
