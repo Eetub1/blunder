@@ -40,3 +40,31 @@ void unmake_move(BoardState *state, Undo *undo) {
     state->board[from] = state->board[to]; // move piece back
     state->board[to] = undo->captured; // move overwritten piece to its original square
 }
+
+
+/**
+ * @brief Returns what type of piece is on the target square relative to the current position
+ * @param board Game board
+ * @param position From what square is a piece moving
+ * @param target To what square is a piece moving
+ * @return SquareContentType Enemy, Friend or Empty
+ */
+SquareContentType square_state(Piece *board, int position, int target) {
+    // Piece cant be empty, the function generate_legal_moves in moves.c checks this
+    
+    Piece cur_piece = board[position];
+    Piece target_piece = board[target];
+
+    if (!target_piece) return EMPTY_SQUARE;
+
+    Color piece_color;
+    if (cur_piece < 7) piece_color = WHITE;
+    else piece_color = BLACK;
+
+    Color target_color;
+    if (target_piece < 7) target_color = WHITE;
+    else target_color = BLACK;
+
+    if (piece_color == target_color) return FRIEND_SQUARE;
+    return ENEMY_SQUARE;
+}

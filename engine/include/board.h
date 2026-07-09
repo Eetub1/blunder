@@ -17,7 +17,9 @@ typedef struct {
     char castling_rights[4]; // "KQkq"
 } BoardState;
 
+
 void make_move(BoardState *state, char *from, char *to, Undo *undo);
 void unmake_move(BoardState *state, Undo *undo);
+SquareContentType square_state(Piece *board, int position, int target);
 
 #endif

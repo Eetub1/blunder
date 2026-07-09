@@ -12,6 +12,12 @@ typedef enum {
     BLACK
 } Color;
 
+typedef enum {
+    EMPTY_SQUARE,
+    ENEMY_SQUARE,
+    FRIEND_SQUARE
+} SquareContentType;
+
 typedef enum { // Follows the same logic as the python version, top-left is index 0
     A8, B8, C8, D8, E8, F8, G8, H8,
     A7, B7, C7, D7, E7, F7, G7, H7,
