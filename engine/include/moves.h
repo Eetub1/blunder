@@ -1,5 +1,5 @@
-#ifndef BOARD.H
-#define BOARD.H
+#ifndef MOVES_H
+#define MOVES_H
 
 #include "board.h"
 

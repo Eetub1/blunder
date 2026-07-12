@@ -14,7 +14,9 @@ typedef struct {
     Piece board[64];
     Color whose_turn;
     int en_passant_target_square;
-    char castling_rights[4]; // "KQkq"
+    char castling_rights[5]; // "KQkq"
+    // I think this also needs to eventually track 3 fold repetition
+    // and also the 50 move rule
 } BoardState;
 
 
