@@ -40,7 +40,7 @@ int generate_sliding_moves(BoardState *state, int position, const int *offsets, 
             if (abs((prev_square % 8) - (target_square % 8)) > 1) break; // if the amount moved to left or right is greater than 1
 
             SquareContentType square =  square_state(state->board, position, target_square);
-            if (square == EMPTY_SQUARE || square == ENEMY_SQUARE) legal_moves[count++] = target_square;
+            if (square == EMPTY_SQUARE  || square == ENEMY_SQUARE) legal_moves[count++] = target_square;
             if (square == FRIEND_SQUARE || square == ENEMY_SQUARE) break;
             
             prev_square = target_square;
@@ -66,7 +66,7 @@ int generate_stepping_moves(BoardState *state, int position, const int *offsets,
     for (int i = 0; i < offsets_length; i++) {
         int target_square = position + offsets[i];
         if (target_square < 0 || target_square > 63) continue;
-        if (abs((position % 8) - (target_square % 8)) > 2) continue; // make sure no phantom moves happen
+        if (abs((position % 8) - (target_square % 8)) > 2) continue;
 
         SquareContentType target_square_state = square_state(state->board, position, target_square);
         if (target_square_state != FRIEND_SQUARE) {
@@ -92,7 +92,7 @@ int generate_pawn_moves(BoardState *state, int position, int *legal_moves) {
     int forward = is_white ? -8 : 8; // which direction is forward depends on piece color
     int start_row = is_white ? 6 : 1; // in which row does the pawn start the game
     int row = position / 8;
-    int col = position % 8;
+    // int col = position % 8;
 
     // can pawn go one square forward
     int one_ahead = position + forward;
