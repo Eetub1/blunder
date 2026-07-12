@@ -3,8 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 from app.chess.board import parse_fen, apply_move, to_fen, flip_turn, algebraic_to_indices, indices_to_algebraic
-from app.chess.moves import calculate_moves
-from app.chess.rules import calculate_legal_moves, is_move_legal, is_stalemate_or_checkmate, GameState
+from app.chess.rules import calculate_legal_moves, is_stalemate_or_checkmate, GameState
 
 app = FastAPI(title="Blunder API")
 

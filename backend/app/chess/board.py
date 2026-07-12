@@ -1,13 +1,4 @@
 def parse_fen(fen: str) -> list[list[str]]:
-    """Parse a FEN string into a 2D board.
-
-    Args:
-        fen: A full FEN string. Only the first (piece-placement) field is used.
-
-    Returns:
-        An 8x8 grid where board[0] is rank 8 (top from White's view).
-        Pieces are FEN chars ('K', 'p', ...); empty squares are "".
-    """
     allowed = set("pnbrqk")
 
     placement = fen.split(" ")[0]
@@ -33,14 +24,6 @@ def parse_fen(fen: str) -> list[list[str]]:
 
 
 def to_fen(board: list[list[str]]) -> str:
-    """Serialize a board back into a FEN piece-placement field.
-
-    Args:
-        board: An 8x8 grid as produced by parse_fen.
-
-    Returns:
-        The piece-placement field only (the part before the first space).
-    """
     if len(board) != 8:
         raise ValueError(f"Board should have 8 rows, now it has: {len(board)} rows")
 
@@ -76,20 +59,6 @@ def flip_turn(fen: str) -> str:
 
 
 def algebraic_to_indices(position: str) -> list[int]:
-    """Convert an algebraic square like "e2" into (row, col) board indices.
-
-    Args:
-        position: A two-character algebraic square — a file letter "a"-"h"
-            followed by a rank digit "1"-"8", e.g. "e2".
-
-    Returns:
-        A [row, col] pair for a board where board[0] is rank 8.
-        For example, "e2" -> [6, 4] (rank 2 maps to row 6 because of the flip).
-
-    Raises:
-        ValueError: If position is not exactly two characters, the file is
-            not "a"-"h", or the rank is not a valid digit.
-    """
     if len(position) != 2:
         raise ValueError(f"Algebraic cell notation should have length 2, now it has {len(position)}")
 
@@ -109,33 +78,12 @@ def algebraic_to_indices(position: str) -> list[int]:
 
 
 def indices_to_algebraic(indices: list[int]) -> str:
-    """Convert [row, col] board indices into an algebraic square like "e2".
-
-    The inverse of algebraic_to_indices. Undoes the rank flip: row 0 is rank 8
-    (top from White's view), so the rank digit is 8 - row.
-
-    Args:
-        indices: A [row, col] pair for a board where board[0] is rank 8.
-
-    Returns:
-        The square in algebraic notation, e.g. [6, 4] -> "e2".
-    """
     row, col = indices
     lut = {0: "a", 1: "b", 2: "c", 3: "d", 4: "e", 5: "f", 6: "g", 7: "h"}
     return lut[col] + str(8 - row)
 
 
 def apply_move(board: list[list[str]], from_square: str, to_square: str) -> list[list[str]]:
-    """Move a piece from one square to another. No legality checking. Copies the board
-
-    Args:
-        board: The current board.
-        from_square: Algebraic origin, e.g. "e2".
-        to_square: Algebraic destination, e.g. "e4".
-
-    Returns:
-        The resulting board.
-    """
     board_copy = [[] for _ in range(8)]
 
     for i in range(len(board)):

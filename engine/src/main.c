@@ -41,7 +41,7 @@ int main(void) {
 
             // print all pseudo-legal moves for piece
             int legal_moves[256];
-            int move_count = generate_moves(&state, from, legal_moves);
+            int move_count = generate_legal_moves(&state, from, legal_moves);
 
             // if the squa
 
