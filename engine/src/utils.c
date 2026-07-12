@@ -47,3 +47,13 @@ int algebraic_to_index(char *position) {
     char row = *(position + 1);
     return ('8' - row) * 8 + (col - 'a');
 }
+
+
+void index_to_algebraic(int index, char *out) {
+    int row = index / 8;
+    int col = index % 8;
+
+    out[0] = 'a' + col;
+    out[1] = '8' - row;
+    out[2] = '\0'; 
+}

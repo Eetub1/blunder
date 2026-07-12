@@ -77,7 +77,7 @@ int generate_knight_moves(BoardState *state, int position, const int *offsets, i
  * @param legal_moves Array where the legal moves are put
  * @return int Number of legal moves
  */
-int generate_legal_moves(BoardState *state, char *from, int *legal_moves) {
+int generate_moves(BoardState *state, char *from, int *legal_moves) {
     int position = algebraic_to_index(from);
     Piece piece = state->board[position];
 

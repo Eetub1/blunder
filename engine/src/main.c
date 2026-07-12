@@ -5,6 +5,7 @@
 #include "types.h"
 #include "utils.h"
 #include "board.h"
+#include "moves.h"
 
 
 int main(void) {
@@ -37,6 +38,21 @@ int main(void) {
         if (!strcmp(from, "un")) {
             unmake_move(&state, &undo);
         } else {
+
+            // print all pseudo-legal moves for piece
+            int legal_moves[256];
+            int move_count = generate_moves(&state, from, legal_moves);
+
+            // if the squa
+
+            printf("Valid squares to move to:\n");
+            for (int i = 0; i < move_count; i++) {
+                char index_storage[3];
+                index_to_algebraic(legal_moves[i], index_storage);
+                printf("%s ", index_storage);
+            }
+            printf("\n\n");
+
             make_move(&state, from, to, &undo);
         }
         print_board(state.board, 64);
