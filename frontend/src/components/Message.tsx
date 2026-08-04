@@ -3,12 +3,12 @@ interface MessageProps {
     isError: boolean
 }
 
-const Message = (messageObject: MessageProps) => {
-    const { message, isError } = messageObject
+const Message = ({ message, isError }: MessageProps) => {
 
     return (
         <div className="d-flex align-items-center justify-content-center" style={{
             "width": "100vw",
+            "padding": "10px",
             "border": isError ? "2px solid red" : "2px solid green",
             "backgroundColor": "white",
             "borderRadius": "5px",

@@ -4,7 +4,7 @@ import { Link } from "react-router-dom"
 
 import { login } from "../services/auth.ts"
 
-export const Login = ({ setUser, setMessage }) => {
+const Login = ({ setUser, setMessage }) => {
     const [username, setUsername] = useState("")
     const [password, setPassword] = useState("")
 
@@ -19,10 +19,13 @@ export const Login = ({ setUser, setMessage }) => {
             setUser(user)
             setMessage({ message: "Login successful!", isError: false })
             setTimeout(() => {
-                setMessage({ message: "", isError: false })
+                setMessage(null)
             }, 4000)
         } catch (error: any) {
             setMessage({ message: `Login failed: ${error.message}`, isError: true })
+            setTimeout(() => {
+                setMessage(null)
+            }, 4000)
         }
     }
 
@@ -52,3 +55,5 @@ export const Login = ({ setUser, setMessage }) => {
         </Container>
     )
 }
+
+export default Login

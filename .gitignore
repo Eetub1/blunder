@@ -8,3 +8,6 @@ __pycache__/
 
 bin/
 *.o
+
+blunder.db
+todo.txt

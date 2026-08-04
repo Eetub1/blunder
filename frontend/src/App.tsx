@@ -1,12 +1,13 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { Routes, Route, Navigate } from "react-router-dom"
 
-import { Login } from "./pages/Login"
-import { SignUp } from "./pages/SignUp"
-import { Frontpage } from "./pages/Frontpage"
+import Login from "./pages/Login"
+import SignUp from "./pages/SignUp"
+import Frontpage from "./pages/Frontpage"
 
 import DrawBoard from "./components/DrawBoard"
 import Message from "./components/Message"
+import Header from "./components/Header"
 
 import parseFen from "./utils/parseFen"
 import indicesToAlgebraic from "./utils/indicesToAlgebraic"
@@ -17,14 +18,20 @@ import { GameState } from "./types"
 // Starting position in FEN notation
 const START = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
 
+interface MessageData {
+    message: string
+    isError: boolean
+}
+
+
 
 function App() {
     const [user, setUser] = useState(() => {
         const loggedUserJSON = window.localStorage.getItem("loggedUser")
-        return loggedUserJSON ? JSON.parse(loggedUserJSON) : "MUISTA_LAITTAA_TÄHÄN_NULL"
+        return loggedUserJSON ? JSON.parse(loggedUserJSON) : null
     })
 
-    const [message, setMessage] = useState(null)
+    const [message, setMessage] = useState<MessageData | null>(null)
 
     const [fen, setFen] = useState(START)
     const [gameState, setGameState] = useState(GameState.ONGOING)
@@ -93,7 +100,8 @@ function App() {
 
     return (
         <>
-            {message && <Message message={message}/>}
+            <Header user={user} setUser={setUser}/>
+            {message && <Message message={message.message} isError={message.isError}/>}
             <Routes>
                 <Route path="/" element={<Frontpage/>}/>
                 
@@ -115,8 +123,8 @@ function App() {
                     </> : <Navigate to="/login"/>
                 }/>
 
-                <Route path="login" element={<Login setUser={setUser} setMessage={setMessage}/>}/>
-                <Route path="signup" element={<SignUp setUser={setUser} setMessage={setMessage}/>}/>
+                <Route path="login" element={!user ? <Login setUser={setUser} setMessage={setMessage}/> : <Navigate to="/board"/>}/>
+                <Route path="signup" element={!user ? <SignUp setUser={setUser} setMessage={setMessage}/> : <Navigate to="/board"/>}/>
 
             </Routes>
 
