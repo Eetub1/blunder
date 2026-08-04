@@ -13,6 +13,7 @@ export const SignUp = ({ setUser, setMessage }) => {
 
         try {
             const user = await signUp({ username, password })
+            console.log(user)
             window.localStorage.setItem("loggedUser", JSON.stringify(user))
             setUsername("")
             setPassword("")

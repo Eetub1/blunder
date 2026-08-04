@@ -19,7 +19,7 @@ const START = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
 
 
 function App() {
-    const [user, setUser] = useState(null)
+    const [user, setUser] = useState("käyttäjä")
     const [message, setMessage] = useState(null)
 
     const [fen, setFen] = useState(START)
@@ -48,7 +48,7 @@ function App() {
             content = {fen, from_square, to_square}
         }
 
-        fetch("http://localhost:8000/api/move", {
+        fetch("http://localhost:8000/api/chess/move", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -78,7 +78,7 @@ function App() {
     const getValidSquares = (from: [number, number]): Promise<number[][]> => {
         const content = { fen, square: indicesToAlgebraic(from) }
 
-        return fetch("http://localhost:8000/api/moves", {
+        return fetch("http://localhost:8000/api/chess/moves", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
