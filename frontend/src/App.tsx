@@ -1,5 +1,13 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import { Routes, Route, Navigate } from "react-router-dom"
+
+import { Login } from "./pages/Login"
+import { SignUp } from "./pages/SignUp"
+import { Frontpage } from "./pages/Frontpage"
+
 import DrawBoard from "./components/DrawBoard"
+import Message from "./components/Message"
+
 import parseFen from "./utils/parseFen"
 import indicesToAlgebraic from "./utils/indicesToAlgebraic"
 import algebraicToIndices from "./utils/algebraicToIndices"
@@ -11,10 +19,23 @@ const START = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
 
 
 function App() {
+    const [user, setUser] = useState(null)
+    const [message, setMessage] = useState(null)
+
     const [fen, setFen] = useState(START)
     const [gameState, setGameState] = useState(GameState.ONGOING)
     const [fromSquare, setFromSquare] = useState("")
     const [toSquare, setToSquare] = useState("")
+
+
+    useEffect(() => {
+        const loggedUserJSON = window.localStorage.getItem("loggedUser")
+        if (loggedUserJSON) {
+            const user = JSON.parse(loggedUserJSON)
+            setUser(user)
+        }
+    }, [])
+
 
     const handleMove = (fromRow: number, fromCol: number, toRow: number, toCol: number, promotion: string) => {
         const from_square = indicesToAlgebraic([fromRow, fromCol])
@@ -77,19 +98,35 @@ function App() {
 
     return (
         <>
-            <DrawBoard 
-                board={parseFen(fen)} 
-                handleMove={handleMove} 
-                getValidSquares={getValidSquares}
-                gameState={gameState}
-                fromSquare={fromSquare}
-                toSquare={toSquare}/>
-            <div>
-                <h2>Debug section:</h2>
-                <div>Fen string {fen}</div>
-                <div>Turn: {turn}</div>
-                <div>Gamestate: {gameState}</div>
-            </div>
+            {message && <Message message={message}/>}
+            <Routes>
+                <Route path="/" element={<Frontpage/>}/>
+                
+                <Route path="/board" element={user ?
+                    <>
+                        <DrawBoard 
+                            board={parseFen(fen)} 
+                            handleMove={handleMove} 
+                            getValidSquares={getValidSquares}
+                            gameState={gameState}
+                            fromSquare={fromSquare}
+                            toSquare={toSquare}/>
+                        <div>
+                            <h2>Debug section:</h2>
+                            <div>Fen string {fen}</div>
+                            <div>Turn: {turn}</div>
+                            <div>Gamestate: {gameState}</div>
+                        </div>
+                    </> : <Navigate to="/login"/>
+                }/>
+
+                <Route path="login" element={<Login setUser={setUser} setMessage={setMessage}/>}/>
+                <Route path="signup" element={<SignUp setUser={setUser} setMessage={setMessage}/>}/>
+
+            </Routes>
+
+
+            
         </>
     )
 }

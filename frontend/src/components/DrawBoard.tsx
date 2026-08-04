@@ -31,7 +31,6 @@ const CELL_SIZE = 64
 const getPieceImage = (char: string) => {
     if (!char) return undefined // Return undefined for empty cells
 
-    // TODO, get these some otherway, dont hotlink them
     switch (char) {
         case "P": return whitePawn
         case "N": return whiteKnight
