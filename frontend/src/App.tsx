@@ -19,22 +19,17 @@ const START = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
 
 
 function App() {
-    const [user, setUser] = useState("käyttäjä")
+    const [user, setUser] = useState(() => {
+        const loggedUserJSON = window.localStorage.getItem("loggedUser")
+        return loggedUserJSON ? JSON.parse(loggedUserJSON) : "MUISTA_LAITTAA_TÄHÄN_NULL"
+    })
+
     const [message, setMessage] = useState(null)
 
     const [fen, setFen] = useState(START)
     const [gameState, setGameState] = useState(GameState.ONGOING)
     const [fromSquare, setFromSquare] = useState("")
     const [toSquare, setToSquare] = useState("")
-
-
-    useEffect(() => {
-        const loggedUserJSON = window.localStorage.getItem("loggedUser")
-        if (loggedUserJSON) {
-            const user = JSON.parse(loggedUserJSON)
-            setUser(user)
-        }
-    }, [])
 
 
     const handleMove = (fromRow: number, fromCol: number, toRow: number, toCol: number, promotion: string) => {
