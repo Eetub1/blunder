@@ -2,7 +2,7 @@ from app.chess.board import indices_to_algebraic, algebraic_to_indices
 from enum import Enum
 
 class CellContentType(Enum):
-    """How a target square relates to the piece being moved."""
+    """How a target square relates to the piece being moved """
     EMPTY = "empty"
     FRIEND = "friend"
     ENEMY = "enemy"
@@ -17,7 +17,7 @@ BISHOP_DIRECTIONS = [(1, 1), (-1, -1), (1, -1), (-1, 1)]
 KING_QUEEN_DIRECTIONS = [(1, 1), (-1, -1), (1, -1), (-1, 1), (1, 0), (-1, 0), (0, 1), (0, -1)]
 
 def is_position_inbounds(position: list[int]) -> bool:
-    """Return True if [row, col] falls within the 8x8 board."""
+    """Return True if [row, col] falls within the 8x8 board """
     row, col = position
     if row < 0 or row >= 8 or col < 0 or col >= 8:
         return False

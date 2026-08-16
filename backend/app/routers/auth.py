@@ -1,15 +1,13 @@
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from sqlmodel import Session, select
+
 from app.database import get_session
 from app.models.user import User
-
-import bcrypt
+from app.auth.helpers import verify_password, hash_password
+from app.auth.security import create_access_token
 
 router = APIRouter()
-
-class TempResponse(BaseModel):
-    message: str
 
 class SignUpRequest(BaseModel):
     username: str
@@ -18,16 +16,6 @@ class SignUpRequest(BaseModel):
 class LoginRequest(BaseModel):
     username: str
     password: str
-
-
-def verify_password(password: str, hashed: str) -> bool:
-    return bcrypt.checkpw(password.encode('utf-8'), hashed.encode('utf-8'))
-
-
-def hash_password(password: str):
-    salt = bcrypt.gensalt()
-    hashed = bcrypt.hashpw(password.encode('utf-8'), salt)
-    return hashed.decode('utf-8')
 
 
 @router.post("/signup")
@@ -49,10 +37,19 @@ def sign_up(req: SignUpRequest, session: Session = Depends(get_session)):
 def login(req: LoginRequest, session: Session = Depends(get_session)):
     username, password = req.username, req.password
 
-    # get the correct user based on username
     user = session.exec(select(User).where(User.username == username)).first()
 
     # verify password
     if not user or not verify_password(password, user.hashed_password):
         raise HTTPException(status_code=401, detail="Invalid username or password")
-    return {"id": user.id, "username": user.username}
+
+    # create a token when user logs in
+    token = create_access_token(user.id)
+    return {
+        "access_token": token,
+        "token_type": "bearer",
+        "user": {
+            "username": user.username,
+            "id": user.id
+        }
+    }

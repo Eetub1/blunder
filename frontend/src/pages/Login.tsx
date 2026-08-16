@@ -4,7 +4,7 @@ import { Link } from "react-router-dom"
 
 import { login } from "../services/auth.ts"
 
-const Login = ({ setUser, setMessage }) => {
+const Login = ({ setUser, setMessage, setToken }) => {
     const [username, setUsername] = useState("")
     const [password, setPassword] = useState("")
 
@@ -12,11 +12,13 @@ const Login = ({ setUser, setMessage }) => {
         event.preventDefault()
 
         try {
-            const user = await login({ username, password })
-            window.localStorage.setItem("loggedUser", JSON.stringify(user))
+            const data = await login({ username, password })
+            console.log("Login successful:", data)
+            window.localStorage.setItem("loggedUser", JSON.stringify(data))
+            setToken(data.access_token)
             setUsername("")
             setPassword("")
-            setUser(user)
+            setUser(data.user)
             setMessage({ message: "Login successful!", isError: false })
             setTimeout(() => {
                 setMessage(null)

@@ -30,6 +30,7 @@ function App() {
         const loggedUserJSON = window.localStorage.getItem("loggedUser")
         return loggedUserJSON ? JSON.parse(loggedUserJSON) : null
     })
+    const [token, setToken] = useState(null)
 
     const [message, setMessage] = useState<MessageData | null>(null)
 
@@ -100,7 +101,7 @@ function App() {
 
     return (
         <>
-            <Header user={user} setUser={setUser}/>
+            <Header user={user} setUser={setUser} setToken={setToken}/>
             {message && <Message message={message.message} isError={message.isError}/>}
             <Routes>
                 <Route path="/" element={<Frontpage/>}/>
@@ -123,7 +124,7 @@ function App() {
                     </> : <Navigate to="/login"/>
                 }/>
 
-                <Route path="login" element={!user ? <Login setUser={setUser} setMessage={setMessage}/> : <Navigate to="/board"/>}/>
+                <Route path="login" element={!user ? <Login setUser={setUser} setMessage={setMessage} setToken={setToken}/> : <Navigate to="/board"/>}/>
                 <Route path="signup" element={!user ? <SignUp setUser={setUser} setMessage={setMessage}/> : <Navigate to="/board"/>}/>
 
             </Routes>

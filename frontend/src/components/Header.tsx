@@ -2,13 +2,15 @@ import { Navbar, Container, Nav, Button } from "react-bootstrap"
 import { Link, NavLink } from "react-router-dom"
 
 interface HeaderProps {
-    user: { username: string } | null
+    user: { username: string, id: string } | null
     setUser: (user: null) => void
+    setToken: (token: null) => void
 }
 
-const Header = ({ user, setUser }: HeaderProps) => {
+const Header = ({ user, setUser, setToken }: HeaderProps) => {
     const logout = () => {
         setUser(null)
+        setToken(null)
         localStorage.removeItem("loggedUser")
     }
 
