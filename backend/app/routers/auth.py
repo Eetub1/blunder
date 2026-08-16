@@ -44,6 +44,7 @@ def login(req: LoginRequest, session: Session = Depends(get_session)):
         raise HTTPException(status_code=401, detail="Invalid username or password")
 
     # create a token when user logs in
+    assert user.id is not None
     token = create_access_token(user.id)
     return {
         "access_token": token,

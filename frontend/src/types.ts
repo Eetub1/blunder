@@ -14,6 +14,16 @@ export type PendingPromotion = {
     isWhite: boolean
 }
 
+export type User = {
+    username: string,
+    id: string
+}
+
+export type MessageData = {
+    message: string
+    isError: boolean
+}
+
 export enum GameState {
     ONGOING = "ongoing",
     CHECKMATE = "checkmate",

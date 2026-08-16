@@ -1,5 +1,5 @@
 import { Navbar, Container, Nav, Button } from "react-bootstrap"
-import { Link, NavLink } from "react-router-dom"
+import { Link, NavLink, useNavigate } from "react-router-dom"
 
 interface HeaderProps {
     user: { username: string, id: string } | null
@@ -13,6 +13,8 @@ const Header = ({ user, setUser, setToken }: HeaderProps) => {
         setToken(null)
         localStorage.removeItem("loggedUser")
     }
+
+    const navigate = useNavigate()
 
     return (
         <Navbar expand="md" className="shadow-sm" style={{ backgroundColor: "#312e2b" }} variant="dark">
@@ -43,10 +45,10 @@ const Header = ({ user, setUser, setToken }: HeaderProps) => {
                             </>
                         ) : (
                             <>
-                                <Button as={Link} to="/login" variant="outline-light" size="sm" className="px-3">
+                                <Button onClick={() => navigate("/login")} variant="outline-light" size="sm" className="px-3">
                                     Log in
                                 </Button>
-                                <Button as={Link} to="/signup" size="sm" className="px-3"
+                                <Button onClick={() => navigate("/signup")} size="sm" className="px-3"
                                     style={{ backgroundColor: "#769656", border: "none" }}>
                                     Sign up
                                 </Button>

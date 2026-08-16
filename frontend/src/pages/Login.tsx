@@ -4,7 +4,15 @@ import { Link } from "react-router-dom"
 
 import { login } from "../services/auth.ts"
 
-const Login = ({ setUser, setMessage, setToken }) => {
+import type { User, MessageData } from "../types"
+
+interface LoginProps {
+    setUser: (user: User | null) => void
+    setMessage: (message: MessageData | null) => void
+    setToken: (token: string | null) => void
+}
+
+const Login = ({ setUser, setMessage, setToken }: LoginProps) => {
     const [username, setUsername] = useState("")
     const [password, setPassword] = useState("")
 
@@ -23,11 +31,10 @@ const Login = ({ setUser, setMessage, setToken }) => {
             setTimeout(() => {
                 setMessage(null)
             }, 4000)
-        } catch (error: any) {
-            setMessage({ message: `Login failed: ${error.message}`, isError: true })
-            setTimeout(() => {
-                setMessage(null)
-            }, 4000)
+        }  catch (error) {
+            const detail = error instanceof Error ? error.message : "Something went wrong"
+            setMessage({ message: `Login failed: ${detail}`, isError: true })
+            setTimeout(() => setMessage(null), 4000)
         }
     }
 
