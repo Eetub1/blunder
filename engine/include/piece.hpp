@@ -1,18 +1,6 @@
 #pragma once
 
-typedef enum 
-{
-    EMPTY,                  // 0
-    WP, WN, WB, WR, WQ, WK, // 1-6
-    BP, BN, BB, BR, BQ, BK  // 7-12
-} PieceType;
-
-typedef enum 
-{
-    WHITE,
-    BLACK
-} Color;
-
+#include "types.hpp"
 
 class Piece 
 {
@@ -22,5 +10,6 @@ private:
     Color color;
 public:
     PieceType getType() {return this->type;}
+    Color getColor() {return this->color;}
     void setType(PieceType type) {this->type = type;}
 };
