@@ -6,6 +6,7 @@
 #include "board.hpp"
 #include "piece.hpp"
 
+
 std::string pieceToGlyph(PieceType type) {
     switch (type) {
         case BK: return "\u2654"; // ♔
@@ -30,7 +31,7 @@ void printBoard(Board board)
 {
     std::vector<Piece> pieceBoard = board.getBoard();
     for (unsigned int i = 0; i < 64; i++) {
-        std::cout << pieceToGlyph(pieceBoard[i].getType());
+        std::cout << pieceToGlyph(pieceBoard[i].getType()) << " ";
         if (i % 8 == 7) {
             std::cout << '\n';
         }
