@@ -1,11 +1,20 @@
-CC = gcc
-CFLAGS = -Iinclude -Wall -Wextra -std=c11
-SRC = $(wildcard src/*.c)
-TARGET = bin/blunder
+GCC      := g++
+GCCFLAGS := -std=c++17 -Iinclude
 
-$(TARGET): $(SRC)
+SRCS := $(wildcard src/*.cpp)
+OBJS := $(SRCS:src/%.cpp=src/%.o)
+TARGET := bin/cpp_engine
+
+all: $(TARGET)
+
+$(TARGET): $(OBJS) | bin
+	$(GCC) $(OBJS) -o $(TARGET)
+
+src/%.o: src/%.cpp
+	$(GCC) $(GCCFLAGS) -c $< -o $@
+
+bin:
 	mkdir -p bin
-	$(CC) $(CFLAGS) $(SRC) -o $(TARGET)
 
 clean:
-	rm -rf bin
+	rm -rf src/*.o bin

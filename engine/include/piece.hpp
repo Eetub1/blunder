@@ -1,22 +1,26 @@
 #pragma once
 
-typedef enum {
+typedef enum 
+{
     EMPTY,                  // 0
     WP, WN, WB, WR, WQ, WK, // 1-6
     BP, BN, BB, BR, BQ, BK  // 7-12
 } PieceType;
 
-typedef enum {
+typedef enum 
+{
     WHITE,
     BLACK
 } Color;
 
 
-class Piece {
+class Piece 
+{
 
 private:
     PieceType type;
     Color color;
 public:
     PieceType getType() {return this->type;}
+    void setType(PieceType type) {this->type = type;}
 };

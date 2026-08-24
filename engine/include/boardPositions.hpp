@@ -1,0 +1,14 @@
+#pragma once
+
+#include "piece.hpp"
+
+PieceType defaultBoard[64]  = { 
+    BR, BN, BB, BQ, BK, BB, BN, BR,
+    BP, BP, BP, BP, BP, BP, BP, BP,
+    EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
+    EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
+    EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
+    EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
+    WP, WP, WP, WP, WP, WP, WP, WP,
+    WR, WN, WB, WQ, WK, WB, WN, WR 
+};
