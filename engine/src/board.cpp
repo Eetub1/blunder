@@ -48,5 +48,21 @@ void Board::makeMove(Move &move) {
 
 
 void Board::unmakeMove() {
+    if (!this->undoStack.size()) {
+        std::cout << "ERROR: tried to unmake a move on a fresh board" << std::endl;
+        return;
+    }
 
+    Move move = this->undoStack.back();
+    this->undoStack.pop_back();
+
+    switch(move.moveType) {
+        default: // MoveType::NORMAL
+            Piece toSquarePiece = this->board[move.to];
+            this->board[move.from] = toSquarePiece;
+            Piece capturedPiece;
+            capturedPiece.setType(move.capturedPieceType);
+            this->board[move.to] = capturedPiece;
+            break;
+    }
 }
