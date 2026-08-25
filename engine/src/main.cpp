@@ -1,6 +1,7 @@
 #include "utils.hpp"
 #include "types.hpp"
 #include "board.hpp"
+#include "moveGenerator.hpp"
 
 
 void playGameWithInput() {
@@ -27,13 +28,19 @@ void playGameWithInput() {
             }
             
             std::cout << "Making a move!" << std::endl;
-            // Should actually validate the move before making it!
+
+            MoveGenerator mg;
+            std::vector<Move> legalMoves = mg.generateLegalMoves(board);
+
+            // Then check if the current made move is in the vector. This could be its own function validateMove
+
 
             Move move;
             move.from = fromIndex;
             move.to = toIndex;
 
             board.makeMove(move);
+            board.swapTurn();
         }
         printBoard(board);
     }

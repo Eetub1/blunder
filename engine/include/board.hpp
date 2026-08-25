@@ -11,15 +11,18 @@ class Board
 {
 
 private:
-    std::vector<Piece> board;
+    std::vector<Piece> grid;
     std::vector<Move> undoStack;
+    Color whoseTurn = Color::WHITE;
 public:
     Board();
     ~Board();
 
     void setupCustomBoard(std::vector<PieceType>);
     void setupDefaultBoard();
-    std::vector<Piece> getBoard() {return this->board;}
+
+    void swapTurn() {this->whoseTurn = this->whoseTurn == Color::WHITE ? Color::BLACK : Color::WHITE;}
+    std::vector<Piece> getGrid() {return this->grid;}
 
     /**
      * @brief Makes the move specified by the move struct on board

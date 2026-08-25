@@ -6,7 +6,7 @@
 #include "types.hpp"
 
 Board::Board() 
-    : board(64) 
+    : grid(64) 
 {}
 
 
@@ -18,7 +18,7 @@ void Board::setupDefaultBoard()
     for (unsigned int i = 0; i < 64; i++) {
         Piece p;
         p.setType(defaultBoard[i]);
-        this->board[i] = p;
+        this->grid[i] = p;
     }
 }
 
@@ -32,12 +32,12 @@ void Board::makeMove(Move &move) {
 
         // This could also maybe be its own function?
         default: // Normal move
-            Piece toSquarePiece = this->board[move.to];
+            Piece toSquarePiece = this->grid[move.to];
             move.capturedPieceType = toSquarePiece.getType();
-            this->board[move.to] = this->board[move.from];
+            this->grid[move.to] = this->grid[move.from];
             Piece empty;
             empty.setType(PieceType::EMPTY);
-            this->board[move.from] = empty;
+            this->grid[move.from] = empty;
             break;
     }
 
@@ -58,11 +58,11 @@ void Board::unmakeMove() {
 
     switch(move.moveType) {
         default: // MoveType::NORMAL
-            Piece toSquarePiece = this->board[move.to];
-            this->board[move.from] = toSquarePiece;
+            Piece toSquarePiece = this->grid[move.to];
+            this->grid[move.from] = toSquarePiece;
             Piece capturedPiece;
             capturedPiece.setType(move.capturedPieceType);
-            this->board[move.to] = capturedPiece;
+            this->grid[move.to] = capturedPiece;
             break;
     }
 }
