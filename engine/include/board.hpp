@@ -5,6 +5,7 @@
 
 #include "piece.hpp"
 #include "types.hpp"
+#include "move.hpp"
 
 
 class Board 

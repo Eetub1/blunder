@@ -2,6 +2,7 @@
 #include "types.hpp"
 #include "board.hpp"
 #include "moveGenerator.hpp"
+#include "move.hpp"
 
 
 void playGameWithInput() {
@@ -32,17 +33,15 @@ void playGameWithInput() {
             MoveGenerator mg;
             std::vector<Move> legalMoves = mg.generateLegalMoves(board);
 
-            std::cout << "All legal knight moves: " << std::endl;
+            /*std::cout << "All legal knight moves: " << std::endl;
             for (auto &move : legalMoves) {
-                std::cout << move.movedPiece << " " << indexToAlgebraic(move.from) << " " << indexToAlgebraic(move.to) << std::endl;
-            }
+                std::cout << move.getMovedPiece() << " " << indexToAlgebraic(move.getFrom()) << " " << indexToAlgebraic(move.getTo()) << std::endl;
+            }*/
 
             // Then check if the current made move is in the vector. This could be its own function validateMove
 
-
-            Move move;
-            move.from = fromIndex;
-            move.to = toIndex;
+            // create a move object
+            Move move(fromIndex, toIndex, board.getGrid()[fromIndex].getType());
 
             board.makeMove(move);
             board.swapTurn();

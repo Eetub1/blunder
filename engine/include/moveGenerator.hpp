@@ -4,6 +4,7 @@
 
 #include "types.hpp"
 #include "board.hpp"
+#include "move.hpp"
 
 class MoveGenerator {
 
@@ -31,12 +32,10 @@ private:
 
                 SquareContent square = board.squareState(from, targetSquare);
                 if (square == EMPTY_SQUARE  || square == ENEMY_SQUARE) {
-                    Move move;
-                    move.movedPiece = board.getGrid()[from].getType();
-                    move.from = from;
-                    move.to = targetSquare;
+                    Move move(from, targetSquare, board.getGrid()[from].getType());
+                    movesVector.push_back(move);
                 }
-                
+
                 if (square == FRIEND_SQUARE || square == ENEMY_SQUARE) break;
                 
                 prevSquare = targetSquare;

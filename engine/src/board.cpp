@@ -4,6 +4,7 @@
 #include "boardPositions.hpp"
 #include "piece.hpp"
 #include "types.hpp"
+#include "move.hpp"
 
 Board::Board() 
     : grid(64) 
@@ -23,24 +24,26 @@ void Board::setupDefaultBoard()
 }
 
 
+void Board::setupCustomBoard(std::vector<PieceType>) {}
+
+
 void Board::makeMove(Move &move) {
     // Make the move on board
     // Also save the move data to the undostack
 
-    switch(move.moveType) {
+    switch(move.getMoveType()) {
         // Probably should handle other cases in their own functions?
 
         // This could also maybe be its own function?
         default: // Normal move
-            Piece toSquarePiece = this->grid[move.to];
-            move.capturedPieceType = toSquarePiece.getType();
-            this->grid[move.to] = this->grid[move.from];
+            Piece toSquarePiece = this->grid[move.getTo()];
+            move.setCapturedPieceType(toSquarePiece.getType());
+            this->grid[move.getTo()] = this->grid[move.getFrom()];
             Piece empty;
             empty.setType(PieceType::EMPTY);
-            this->grid[move.from] = empty;
+            this->grid[move.getFrom()] = empty;
             break;
     }
-
 
 
     undoStack.push_back(move);
@@ -56,13 +59,13 @@ void Board::unmakeMove() {
     Move move = this->undoStack.back();
     this->undoStack.pop_back();
 
-    switch(move.moveType) {
+    switch(move.getMoveType()) {
         default: // MoveType::NORMAL
-            Piece toSquarePiece = this->grid[move.to];
-            this->grid[move.from] = toSquarePiece;
+            Piece toSquarePiece = this->grid[move.getTo()];
+            this->grid[move.getFrom()] = toSquarePiece;
             Piece capturedPiece;
-            capturedPiece.setType(move.capturedPieceType);
-            this->grid[move.to] = capturedPiece;
+            capturedPiece.setType(move.getCapturedPieceType());
+            this->grid[move.getTo()] = capturedPiece;
             break;
     }
 }

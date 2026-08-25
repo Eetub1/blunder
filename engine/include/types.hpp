@@ -15,7 +15,7 @@ typedef enum
 
 typedef enum 
 {
-    WHITESHORT, WHITELONG, BLACKSHORT, BLACKLONG
+    NONE, WHITESHORT, WHITELONG, BLACKSHORT, BLACKLONG
 } CastleType;
 
 typedef enum 
@@ -23,7 +23,7 @@ typedef enum
     NORMAL, CASTLE, PROMOTION, ENPASSANT
 } MoveType;
 
-typedef struct 
+/*typedef struct 
 {
     PieceType movedPiece;
     int enPassantSquare;
@@ -33,7 +33,8 @@ typedef struct
     CastleType castleType;
     MoveType moveType = MoveType::NORMAL;
     // Something about promotion also?!
-} Move;
+} Move;*/
+
 
 // What is in a square in relation to another square
 typedef enum {

@@ -2,16 +2,12 @@
 
 #include "moveGenerator.hpp"
 #include "types.hpp"
+#include "move.hpp"
 
 std::array<int, 8> KNIGHT_OFFSETS = {-17, -15, -10, -6, 6, 10, 15, 17};
 std::array<int, 4> BISHOP_OFFSETS = {-9, -7, 7, 9};
 std::array<int, 4> ROOK_OFFSETS = {-8, -1, 1, 8};
 std::array<int, 8> KING_AND_QUEEN_OFFSETS = {-9, -8, -7, -1, 1, 7, 8, 9};
-
-//const int KNIGHT_OFFSETS[8] = {-17, -15, -10, -6, 6, 10, 15, 17};
-//const int BISHOP_OFFSETS[4] = {-9, -7, 7, 9};
-//const int ROOK_OFFSETS[4] = {-8, -1, 1, 8};
-//const int KING_AND_QUEEN_OFFSETS[8] = {-9, -8, -7, -1, 1, 7, 8, 9};
 
 
 std::vector<Move> MoveGenerator::generateLegalMoves(Board &board) {
@@ -70,10 +66,7 @@ void MoveGenerator::generateSteppingMoves(std::vector<Move> &movesVector, int fr
 
         SquareContent targetSquareState = board.squareState(from, targetSquare);
         if (targetSquareState != FRIEND_SQUARE) {
-            Move move;
-            move.movedPiece = board.getGrid()[from].getType();
-            move.from = from;
-            move.to = targetSquare;
+            Move move(from, targetSquare, board.getGrid()[from].getType());
             movesVector.push_back(move);
         }
     }
