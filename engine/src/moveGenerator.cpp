@@ -42,15 +42,15 @@ void MoveGenerator::generateMoves(std::vector<Move> &movesVector, int from, Boar
             break;    
         case WB:
         case BB:
-            // generateSlidingMoves(state, position, BISHOP_OFFSETS, 4, legal_moves);
+            generateSlidingMoves(movesVector, from, board, BISHOP_OFFSETS);
             break;
         case WR:
         case BR:
-            // generateSlidingMoves(state, position, ROOK_OFFSETS, 4, legal_moves);
+            generateSlidingMoves(movesVector, from, board, ROOK_OFFSETS);
             break;    
         case WQ:
         case BQ:
-            // generateSlidingMoves(state, position, KING_AND_QUEEN_OFFSETS, 8, legal_moves);
+            generateSlidingMoves(movesVector, from, board, KING_AND_QUEEN_OFFSETS);
             break;
         case WK:
         case BK:
@@ -71,6 +71,7 @@ void MoveGenerator::generateSteppingMoves(std::vector<Move> &movesVector, int fr
         SquareContent targetSquareState = board.squareState(from, targetSquare);
         if (targetSquareState != FRIEND_SQUARE) {
             Move move;
+            move.movedPiece = board.getGrid()[from].getType();
             move.from = from;
             move.to = targetSquare;
             movesVector.push_back(move);

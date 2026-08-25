@@ -25,6 +25,7 @@ typedef enum
 
 typedef struct 
 {
+    PieceType movedPiece;
     int enPassantSquare;
     int from;
     int to;
