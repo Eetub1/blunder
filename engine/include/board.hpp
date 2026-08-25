@@ -23,6 +23,7 @@ public:
 
     void swapTurn() {this->whoseTurn = this->whoseTurn == Color::WHITE ? Color::BLACK : Color::WHITE;}
     std::vector<Piece> getGrid() {return this->grid;}
+    SquareContent squareState(int from, int target); // Returns what is in the target square in relation to the from square
 
     /**
      * @brief Makes the move specified by the move struct on board

@@ -33,3 +33,8 @@ typedef struct
     MoveType moveType = MoveType::NORMAL;
     // Something about promotion also?!
 } Move;
+
+// What is in a square in relation to another square
+typedef enum {
+    ENEMY_SQUARE, FRIEND_SQUARE, EMPTY_SQUARE
+} SquareContent;

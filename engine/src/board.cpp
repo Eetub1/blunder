@@ -66,3 +66,18 @@ void Board::unmakeMove() {
             break;
     }
 }
+
+
+SquareContent Board::squareState(int from, int target) {
+    std::vector<Piece> grid = this->getGrid();
+    PieceType fromPieceType = grid[from].getType();
+    PieceType targetPieceType = grid[target].getType();
+
+    if (targetPieceType == PieceType::EMPTY) return SquareContent::EMPTY_SQUARE;
+
+    Color fromColor = fromPieceType < 7 ? Color::WHITE : Color::BLACK;
+    Color targetColor = targetPieceType < 7 ? Color::WHITE : Color::BLACK;
+
+    if (fromColor == targetColor) return SquareContent::FRIEND_SQUARE;
+    return SquareContent::ENEMY_SQUARE;
+}

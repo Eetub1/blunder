@@ -32,6 +32,11 @@ void playGameWithInput() {
             MoveGenerator mg;
             std::vector<Move> legalMoves = mg.generateLegalMoves(board);
 
+            std::cout << "All legal knight moves: " << std::endl;
+            for (auto &move : legalMoves) {
+                std::cout << indexToAlgebraic(move.from) << " " << indexToAlgebraic(move.to) << std::endl;
+            }
+
             // Then check if the current made move is in the vector. This could be its own function validateMove
 
 
