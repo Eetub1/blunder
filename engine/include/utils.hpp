@@ -7,7 +7,7 @@
 #include "piece.hpp"
 
 
-std::string pieceToGlyph(PieceType type) {
+inline std::string pieceToGlyph(PieceType type) {
     switch (type) {
         case WK: return "\u265A"; // ♚
         case WQ: return "\u265B"; // ♛
@@ -27,7 +27,7 @@ std::string pieceToGlyph(PieceType type) {
 }
 
 
-void printBoard(Board board) 
+inline void printBoard(Board board) 
 {
     std::vector<Piece> pieceBoard = board.getGrid();
     for (unsigned int i = 0; i < 64; i++) {
@@ -40,13 +40,13 @@ void printBoard(Board board)
 }
 
 
-int algebraicToIndex(std::string position) {
+inline int algebraicToIndex(std::string position) {
     if (position.size() != 2) return -1;
     return ('8' - position[1]) * 8 + (position[0] - 'a');
 }
 
 
-std::string indexToAlgebraic(int index) {
+inline std::string indexToAlgebraic(int index) {
     int row = index / 8;
     int col = index % 8;
 

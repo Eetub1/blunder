@@ -5,7 +5,8 @@
 #include "move.hpp"
 
 
-void playGameWithInput() {
+void playGameWithInput() 
+{
     Board board;
     board.setupDefaultBoard();
     printBoard(board);
@@ -41,7 +42,7 @@ void playGameWithInput() {
             // Then check if the current made move is in the vector. This could be its own function validateMove
 
             // create a move object
-            Move move(fromIndex, toIndex, board.getGrid()[fromIndex].getType());
+            Move move(fromIndex, toIndex, board.getSquarePieceType(fromIndex));
 
             board.makeMove(move);
             board.swapTurn();

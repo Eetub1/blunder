@@ -20,7 +20,7 @@ public:
         capturedPieceType(capturedPieceType),
         promotionPiece(promotionPiece),
         castleType(castleType),
-        moveType(moveType) 
+        moveType(moveType)
     {}
 
     ~Move() = default;

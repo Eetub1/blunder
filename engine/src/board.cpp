@@ -27,7 +27,8 @@ void Board::setupDefaultBoard()
 void Board::setupCustomBoard(std::vector<PieceType>) {}
 
 
-void Board::makeMove(Move &move) {
+void Board::makeMove(Move &move) 
+{
     // Make the move on board
     // Also save the move data to the undostack
 
@@ -50,7 +51,8 @@ void Board::makeMove(Move &move) {
 }
 
 
-void Board::unmakeMove() {
+void Board::unmakeMove() 
+{
     if (!this->undoStack.size()) {
         std::cout << "ERROR: tried to unmake a move on a fresh board" << std::endl;
         return;
@@ -71,7 +73,8 @@ void Board::unmakeMove() {
 }
 
 
-SquareContent Board::squareState(int from, int target) {
+SquareContent Board::squareState(int from, int target) 
+{
     std::vector<Piece> grid = this->getGrid();
     PieceType fromPieceType = grid[from].getType();
     PieceType targetPieceType = grid[target].getType();
@@ -83,4 +86,10 @@ SquareContent Board::squareState(int from, int target) {
 
     if (fromColor == targetColor) return SquareContent::FRIEND_SQUARE;
     return SquareContent::ENEMY_SQUARE;
+}
+
+
+PieceType Board::getSquarePieceType(int index) 
+{
+    return this->grid[index].getType();
 }

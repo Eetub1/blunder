@@ -14,7 +14,7 @@ A Fullstack chess application
 -SQLite
 
 #### Engine
--C
+-C++
 
 ## About the use of AI in this project
 

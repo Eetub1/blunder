@@ -19,9 +19,11 @@ private:
     // Generates all pseudolegal moves from a given position. Pseudolegal meaning that checks are not taken into consideration
     void generateMoves(std::vector<Move> &movesVector, int from, Board &board);
     void generateSteppingMoves(std::vector<Move> &movesVector, int from, Board &board, std::array<int, 8> &OFFSETS);
-    
+    void generateKingMoves(std::vector<Move> &movesVector, int from, Board &board, std::array<int, 8> &OFFSETS);
+
     template <std::size_t N>
-    void generateSlidingMoves(std::vector<Move> &movesVector, int from, Board &board, std::array<int, N> &OFFSETS) {
+    void generateSlidingMoves(std::vector<Move> &movesVector, int from, Board &board, std::array<int, N> &OFFSETS) 
+    {
         for (int offset : OFFSETS) {
             int targetSquare = from + offset;
             int prevSquare = from;
