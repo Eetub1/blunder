@@ -16,6 +16,7 @@ private:
     std::vector<Piece> grid;
     std::vector<Move> undoStack;
     std::string castlingRights = "KQkq";
+    int enPassantSquare = -1;
 
     Color whoseTurn = Color::WHITE;
 public:
@@ -32,6 +33,8 @@ public:
     std::vector<Piece> getGrid() {return this->grid;}
     SquareContent squareState(int from, int target); // Returns what is in the target square in relation to the from square
     PieceType getSquarePieceType(int index);
+    Color getPieceColor(int index) {return this->grid[index].getColor();}
+    int getEnPassantSquare() {return this->enPassantSquare;}
 
     // Makes the move specified by the move struct on board. Assumes that the move is perfectly valid.
     void makeMove(Move &move);

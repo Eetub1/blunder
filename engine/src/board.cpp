@@ -45,8 +45,6 @@ void Board::makeMove(Move &move)
             this->grid[move.getFrom()] = empty;
             break;
     }
-
-
     undoStack.push_back(move);
 }
 

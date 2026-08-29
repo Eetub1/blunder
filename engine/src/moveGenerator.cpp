@@ -33,7 +33,7 @@ void MoveGenerator::generateMoves(std::vector<Move> &movesVector, int from, Boar
     switch (type) {
         case WP:
         case BP:
-            // generatePawnMoves(state, position, legal_moves);
+            generatePawnMoves(movesVector, from, board);
             break;
         case WN:
         case BN:
@@ -157,6 +157,98 @@ void MoveGenerator::generateKingMoves(std::vector<Move> &movesVector, int from, 
                     PieceType::EMPTY, 
                     CastleType::QUEENSIDE,
                     MoveType::CASTLING
+                ));
+            }
+        }
+    }
+}
+
+
+void MoveGenerator::generatePawnMoves(std::vector<Move> &movesVector, int from, Board &board) {
+    bool isWhite = board.getPieceColor(from) == Color::WHITE;
+
+    int forward = isWhite ? -8 : 8; // which direction is forward depends on piece color
+    int startRow = isWhite ? 6 : 1; // in which row does the pawn start the game
+    int row = from / 8;
+
+    // can pawn go one square forward
+    int oneAhead = from + forward;
+    if (oneAhead >= 0 && oneAhead < 64) {
+        if (board.squareState(from, oneAhead) == SquareContent::EMPTY_SQUARE) {
+            movesVector.push_back(Move(
+                from, 
+                oneAhead, 
+                isWhite ? PieceType::WP : PieceType::BP,
+                -1,
+                PieceType::EMPTY, 
+                PieceType::EMPTY, 
+                CastleType::NONE,
+                MoveType::NORMAL
+            ));
+
+            // can pawn go two moves forward
+            if (row == startRow) {
+                int twoAhead = from + 2 * forward;
+                if (board.squareState(from, twoAhead) == SquareContent::EMPTY_SQUARE) {
+                    movesVector.push_back(Move(
+                        from, 
+                        twoAhead, 
+                        isWhite ? PieceType::WP : PieceType::BP,
+                        -1,
+                        PieceType::EMPTY, 
+                        PieceType::EMPTY, 
+                        CastleType::NONE,
+                        MoveType::NORMAL
+                    ));
+                }
+            }
+        }
+    }
+
+    // can pawn capture anything
+    int capture_offsets[2] = { forward - 1, forward + 1};
+    for (int i = 0; i < 2; i++) {
+        int target = from + capture_offsets[i];
+
+        if (target < 0 || target >= 64) continue;
+        if (abs((from % 8) - (target % 8)) != 1) continue;
+
+        if (board.squareState(from, target) == SquareContent::ENEMY_SQUARE) {
+            movesVector.push_back(Move(
+                from, 
+                target, 
+                isWhite ? PieceType::WP : PieceType::BP,
+                -1,
+                board.getSquarePieceType(target), 
+                PieceType::EMPTY, 
+                CastleType::NONE,
+                MoveType::NORMAL
+            ));
+        }
+
+    }
+
+    // is en passant possible
+    // this enPassantSquare is one behind the pawn that moved on the previous turn
+    // check if we are attacking this square with a pawn. So check the pawn's left and right attack
+    int enPassantSquare = board.getEnPassantSquare();
+    if (enPassantSquare >= 0) {
+        for (int i = 0; i < 2; i++) {
+            int target = from + capture_offsets[i];
+
+            if (target < 0 || target >= 64) continue;
+            if (abs((from % 8) - (target % 8)) != 1) continue;
+
+            if (target == enPassantSquare) {
+                movesVector.push_back(Move(
+                    from, 
+                    target, 
+                    isWhite ? PieceType::WP : PieceType::BP,
+                    enPassantSquare,
+                    board.getSquarePieceType(target), 
+                    PieceType::EMPTY, 
+                    CastleType::NONE,
+                    MoveType::ENPASSANT
                 ));
             }
         }

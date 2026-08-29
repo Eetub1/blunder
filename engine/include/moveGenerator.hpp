@@ -20,6 +20,7 @@ private:
     void generateMoves(std::vector<Move> &movesVector, int from, Board &board);
     void generateSteppingMoves(std::vector<Move> &movesVector, int from, Board &board, std::array<int, 8> &OFFSETS);
     void generateKingMoves(std::vector<Move> &movesVector, int from, Board &board, std::array<int, 8> &OFFSETS);
+    void generatePawnMoves(std::vector<Move> &movesVector, int from, Board &board);
 
     template <std::size_t N>
     void generateSlidingMoves(std::vector<Move> &movesVector, int from, Board &board, std::array<int, N> &OFFSETS) 
