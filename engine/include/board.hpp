@@ -23,18 +23,19 @@ public:
     Board();
     ~Board();
 
-    std::string getCastlingRights() {return this->castlingRights;}
-    Color getWhoseTurn() {return this->whoseTurn;}
-
     void setupCustomBoard(std::vector<PieceType>);
     void setupDefaultBoard();
 
-    void swapTurn() {this->whoseTurn = this->whoseTurn == Color::WHITE ? Color::BLACK : Color::WHITE;}
+    void               swapTurn() {this->whoseTurn = this->whoseTurn == Color::WHITE ? Color::BLACK : Color::WHITE;}
+    int                findKing(bool white);
+    
+    SquareContent      squareState(int from, int target); // Returns what is in the target square in relation to the from square
+    PieceType          getSquarePieceType(int index);
     std::vector<Piece> getGrid() {return this->grid;}
-    SquareContent squareState(int from, int target); // Returns what is in the target square in relation to the from square
-    PieceType getSquarePieceType(int index);
-    Color getPieceColor(int index) {return this->grid[index].getColor();}
-    int getEnPassantSquare() {return this->enPassantSquare;}
+    Color              getPieceColor(int index) {return this->grid[index].getColor();}
+    int                getEnPassantSquare() {return this->enPassantSquare;}
+    std::string        getCastlingRights() {return this->castlingRights;}
+    Color              getWhoseTurn() {return this->whoseTurn;}
 
     // Makes the move specified by the move struct on board. Assumes that the move is perfectly valid.
     void makeMove(Move &move);

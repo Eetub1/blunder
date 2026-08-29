@@ -28,7 +28,7 @@ std::vector<Move> MoveGenerator::generateLegalMoves(Board &board)
 
 void MoveGenerator::generateMoves(std::vector<Move> &movesVector, int from, Board &board) 
 {
-    PieceType type = board.getGrid()[from].getType();
+    PieceType type = board.getSquarePieceType(from);
 
     switch (type) {
         case WP:
@@ -245,7 +245,7 @@ void MoveGenerator::generatePawnMoves(std::vector<Move> &movesVector, int from, 
                     target, 
                     isWhite ? PieceType::WP : PieceType::BP,
                     enPassantSquare,
-                    board.getSquarePieceType(target), 
+                    isWhite ? PieceType::BP : PieceType::WP, 
                     PieceType::EMPTY, 
                     CastleType::NONE,
                     MoveType::ENPASSANT

@@ -12,7 +12,7 @@ public:
     MoveGenerator() {};
     ~MoveGenerator() {};
 
-    // Generates all the legal moves that can be played on board
+    // Generates all the legal moves that can be played on board. Take checks into consideration
     std::vector<Move> generateLegalMoves(Board &board);
 
 private:

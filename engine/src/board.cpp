@@ -91,3 +91,13 @@ PieceType Board::getSquarePieceType(int index)
 {
     return this->grid[index].getType();
 }
+
+
+int Board::findKing(bool white) 
+{
+    PieceType target = white ? PieceType::WK : PieceType::BK;
+    std::vector<Piece> grid = this->getGrid();
+    for (int i = 0; i < 64; i++) {
+        if (grid[i].getType() == target) return i;
+    }
+}
