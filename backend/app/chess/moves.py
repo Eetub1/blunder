@@ -17,7 +17,6 @@ BISHOP_DIRECTIONS = [(1, 1), (-1, -1), (1, -1), (-1, 1)]
 KING_QUEEN_DIRECTIONS = [(1, 1), (-1, -1), (1, -1), (-1, 1), (1, 0), (-1, 0), (0, 1), (0, -1)]
 
 def is_position_inbounds(position: list[int]) -> bool:
-    """Return True if [row, col] falls within the 8x8 board """
     row, col = position
     if row < 0 or row >= 8 or col < 0 or col >= 8:
         return False

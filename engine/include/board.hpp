@@ -28,8 +28,10 @@ public:
 
     void               swapTurn() {this->whoseTurn = this->whoseTurn == Color::WHITE ? Color::BLACK : Color::WHITE;}
     int                findKing(bool white);
-    
+    bool               isSquareAttacked(int from, bool byWhite);
     SquareContent      squareState(int from, int target); // Returns what is in the target square in relation to the from square
+    Piece              at(int index) {return this->grid[index];}
+
     PieceType          getSquarePieceType(int index);
     std::vector<Piece> getGrid() {return this->grid;}
     Color              getPieceColor(int index) {return this->grid[index].getColor();}

@@ -14,10 +14,10 @@ public:
 
     // Generates all the legal moves that can be played on board. Take checks into consideration
     std::vector<Move> generateLegalMoves(Board &board);
-
-private:
     // Generates all pseudolegal moves from a given position. Pseudolegal meaning that checks are not taken into consideration
     void generateMoves(std::vector<Move> &movesVector, int from, Board &board);
+
+private:
     void generateSteppingMoves(std::vector<Move> &movesVector, int from, Board &board, std::array<int, 8> &OFFSETS);
     void generateKingMoves(std::vector<Move> &movesVector, int from, Board &board, std::array<int, 8> &OFFSETS);
     void generatePawnMoves(std::vector<Move> &movesVector, int from, Board &board);

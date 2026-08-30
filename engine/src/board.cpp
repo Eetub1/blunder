@@ -5,6 +5,7 @@
 #include "piece.hpp"
 #include "types.hpp"
 #include "move.hpp"
+#include "moveGenerator.hpp"
 
 Board::Board() 
     : grid(64) 
@@ -100,4 +101,49 @@ int Board::findKing(bool white)
     for (int i = 0; i < 64; i++) {
         if (grid[i].getType() == target) return i;
     }
+    return -1; // There should always be both kings on board
+}
+
+
+bool Board::isSquareAttacked(int square, bool byWhite) 
+{
+    for (int i = 0; i < 64; i++) {
+        Piece piece = this->at(i);
+        PieceType type = piece.getType();
+
+        if (type == EMPTY) continue;
+
+        bool pieceIsWhite = (type >= WP && type <= WK);
+        if (byWhite && !pieceIsWhite) continue;
+        if (!byWhite && pieceIsWhite) continue;
+
+        // pawns need to be handled separately because they attack differently than how they move
+        if (type == WP || type == BP) {
+            int rowDelta = byWhite ? -1 : 1;
+            int fileOffsets[2] = { -1, 1 };
+
+            int fromRow = i / 8;
+            int fromCol = i % 8;
+
+            for (int k = 0; k < 2; k++) {
+                int targetRow = fromRow + rowDelta;
+                int targetCol = fromCol + fileOffsets[k];
+
+                if (targetRow < 0 || targetRow > 7 || targetCol < 0 || targetCol > 7) continue;
+
+                int attackedSquare = targetRow * 8 + targetCol;
+                if (attackedSquare == square) return true; // return immediately if square found
+            }
+        } else {
+            // all the squares that are attacked by white or black depending on byWhite
+            std::vector<Move> moves;
+            MoveGenerator mg;
+            mg.generateMoves(moves, i, *this);
+
+            for (Move move : moves) {
+                if (move.getTo() == square) return true;
+            }
+        }
+    }
+    return false;
 }
