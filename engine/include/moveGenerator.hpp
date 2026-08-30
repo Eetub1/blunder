@@ -35,7 +35,13 @@ private:
 
                 SquareContent square = board.squareState(from, targetSquare);
                 if (square == EMPTY_SQUARE  || square == ENEMY_SQUARE) {
-                    Move move(from, targetSquare, board.getGrid()[from].getType());
+                    Move move(
+                        from, 
+                        targetSquare, 
+                        board.getSquarePieceType(from),
+                        -1,
+                        board.getSquarePieceType(targetSquare)
+                    );
                     movesVector.push_back(move);
                 }
 

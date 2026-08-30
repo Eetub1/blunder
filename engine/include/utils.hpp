@@ -29,9 +29,8 @@ inline std::string pieceToGlyph(PieceType type) {
 
 inline void printBoard(Board board) 
 {
-    std::vector<Piece> pieceBoard = board.getGrid();
     for (unsigned int i = 0; i < 64; i++) {
-        std::cout << pieceToGlyph(pieceBoard[i].getType()) << " ";
+        std::cout << pieceToGlyph(board.at(i).getType()) << " ";
         if (i % 8 == 7) {
             std::cout << '\n';
         }

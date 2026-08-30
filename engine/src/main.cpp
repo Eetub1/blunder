@@ -29,23 +29,29 @@ void playGameWithInput()
                 break;
             }
             
-            std::cout << "Making a move!" << std::endl;
-
+            // Generate all possible moves in the position
             MoveGenerator mg;
             std::vector<Move> legalMoves = mg.generateLegalMoves(board);
 
-            /*std::cout << "All legal knight moves: " << std::endl;
-            for (auto &move : legalMoves) {
-                std::cout << move.getMovedPiece() << " " << indexToAlgebraic(move.getFrom()) << " " << indexToAlgebraic(move.getTo()) << std::endl;
-            }*/
+            // Check if move is in legalMoves
+            Move *move;
+            bool isValid = false;
+            for (auto legalMove : legalMoves) {
+                if (legalMove.getFrom() == fromIndex && legalMove.getTo() == toIndex) {
+                    move = &legalMove;
 
-            // Then check if the current made move is in the vector. This could be its own function validateMove
+                    board.makeMove(legalMove);
+                    board.swapTurn();
+                    
+                    isValid = true;
+                    break;
+                }
+            }
+            std::string piece = isValid ? "valid" : "not valid";
+            std::cout << "The move you made was " << piece << std::endl; 
 
-            // create a move object
-            Move move(fromIndex, toIndex, board.getSquarePieceType(fromIndex));
-
-            board.makeMove(move);
-            board.swapTurn();
+            // a bit dangerous because move could be null
+            std::cout << "The type of the made move was: " << move->getMoveType() << std::endl; 
         }
         printBoard(board);
     }
@@ -55,6 +61,5 @@ void playGameWithInput()
 int main() 
 {
     playGameWithInput();
-
     return 0;
 }

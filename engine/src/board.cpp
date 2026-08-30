@@ -25,22 +25,49 @@ void Board::setupDefaultBoard()
 }
 
 
-void Board::setupCustomBoard(std::vector<PieceType>) {}
+void Board::setupCustomBoard(std::vector<PieceType>) 
+{
+    // TODO
+}
+
+
+void Board::makeCastlingMove(Move &move) 
+{
+    Color color = move.getColor();
+    switch (move.getCastleType()) {
+        case CastleType::KINGSIDE:
+            if (color == Color::WHITE) {
+
+            } else {
+
+            }
+            break;
+        case CastleType::QUEENSIDE:
+            if (color == Color::WHITE) {
+
+            } else {
+                
+            }
+            break;
+    }
+}
 
 
 void Board::makeMove(Move &move) 
 {
-    // Make the move on board
-    // Also save the move data to the undostack
-
     switch(move.getMoveType()) {
-        // Probably should handle other cases in their own functions?
-
+        case MoveType::CASTLING:
+            makeCastlingMove(move);
+            break;
+        case MoveType::PROMOTION:
+            break;
+        case MoveType::ENPASSANT:
+            break;
         // This could also maybe be its own function?
         default: // Normal move
             Piece toSquarePiece = this->grid[move.getTo()];
-            move.setCapturedPieceType(toSquarePiece.getType());
             this->grid[move.getTo()] = this->grid[move.getFrom()];
+
             Piece empty;
             empty.setType(PieceType::EMPTY);
             this->grid[move.getFrom()] = empty;
@@ -74,9 +101,8 @@ void Board::unmakeMove()
 
 SquareContent Board::squareState(int from, int target) 
 {
-    std::vector<Piece> grid = this->getGrid();
-    PieceType fromPieceType = grid[from].getType();
-    PieceType targetPieceType = grid[target].getType();
+    PieceType fromPieceType = this->at(from).getType();
+    PieceType targetPieceType = this->at(target).getType();
 
     if (targetPieceType == PieceType::EMPTY) return SquareContent::EMPTY_SQUARE;
 
@@ -90,16 +116,15 @@ SquareContent Board::squareState(int from, int target)
 
 PieceType Board::getSquarePieceType(int index) 
 {
-    return this->grid[index].getType();
+    return this->at(index).getType();
 }
 
 
 int Board::findKing(bool white) 
 {
     PieceType target = white ? PieceType::WK : PieceType::BK;
-    std::vector<Piece> grid = this->getGrid();
     for (int i = 0; i < 64; i++) {
-        if (grid[i].getType() == target) return i;
+        if (this->at(i).getType() == target) return i;
     }
     return -1; // There should always be both kings on board
 }
@@ -146,4 +171,17 @@ bool Board::isSquareAttacked(int square, bool byWhite)
         }
     }
     return false;
+}
+
+
+bool Board::isInCheck(bool white) 
+{
+    int index = this->findKing(white);
+    return this->isSquareAttacked(index, !white);
+}
+
+
+bool Board::isMoveLegal()
+{
+    // TODO
 }

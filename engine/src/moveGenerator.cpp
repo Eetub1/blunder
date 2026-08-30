@@ -70,7 +70,13 @@ void MoveGenerator::generateSteppingMoves(std::vector<Move> &movesVector, int fr
 
         SquareContent targetSquareState = board.squareState(from, targetSquare);
         if (targetSquareState != FRIEND_SQUARE) {
-            Move move(from, targetSquare, board.getSquarePieceType(from));
+            Move move(
+                from, 
+                targetSquare, 
+                board.getSquarePieceType(from),
+                -1,
+                board.getSquarePieceType(targetSquare)
+            );
             movesVector.push_back(move);
         }
     }

@@ -28,6 +28,12 @@ public:
     int getFrom() const { return from; }
     int getTo() const { return to; }
     PieceType getMovedPiece() const { return movedPiece; }
+    Color getColor() const 
+    {
+        PieceType type = this->getMovedPiece();
+        if (type >= WP && type <= WK) return Color::WHITE;
+        return Color::BLACK;
+    }
     int getEnPassantSquare() const { return enPassantSquare; }
     PieceType getCapturedPieceType() const { return capturedPieceType; }
     PieceType getPromotionPiece() const { return promotionPiece; }

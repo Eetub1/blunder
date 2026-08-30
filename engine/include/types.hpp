@@ -27,3 +27,7 @@ typedef enum
 typedef enum {
     ENEMY_SQUARE, FRIEND_SQUARE, EMPTY_SQUARE
 } SquareContent;
+
+typedef enum {
+    ONGOING, CHECKMATE, STALEMATE, DRAW
+} GameState;
