@@ -23,8 +23,8 @@ public:
     Board();
     ~Board();
 
-    void setupCustomBoard(std::vector<PieceType>);
     void setupDefaultBoard();
+    void setupCustomBoardFromFen(std::string fen);
 
     void               swapTurn() {this->whoseTurn = this->whoseTurn == Color::WHITE ? Color::BLACK : Color::WHITE;}
     int                findKing(bool white);
@@ -32,14 +32,16 @@ public:
     bool               isInCheck(bool white);
     bool               isMoveLegal();  
     SquareContent      squareState(int from, int target); // Returns what is in the target square in relation to the from square
+    void               removeCastlingRights(char type);
+    void               addCastlingRights(char type);
+
     Piece              at(int index) {return this->grid[index];}
     void               setAt(int index, Piece piece) {this->grid[index] = piece;}
-
     PieceType          getSquarePieceType(int index);
     std::vector<Piece> getGrid() {return this->grid;}
     Color              getPieceColor(int index) {return this->grid[index].getColor();}
     int                getEnPassantSquare() {return this->enPassantSquare;}
-    std::string        getCastlingRights() {return this->castlingRights;}
+    std::string&       getCastlingRights() {return this->castlingRights;}
     Color              getWhoseTurn() {return this->whoseTurn;}
 
     // Makes the move specified by the move object on board. Assumes that the move is perfectly valid.

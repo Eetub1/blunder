@@ -1,4 +1,5 @@
 #include <vector>
+#include <cassert>
 
 #include "board.hpp"
 #include "boardPositions.hpp"
@@ -30,9 +31,30 @@ void Board::setupDefaultBoard()
 }
 
 
-void Board::setupCustomBoard(std::vector<PieceType>) 
+void Board::setupCustomBoardFromFen(std::string fen) 
 {
-    // TODO
+
+}
+
+
+void Board::removeCastlingRights(char type) 
+{
+    std::string& rights = this->getCastlingRights();
+
+    assert(rights.size() > 2);
+
+    size_t pos = rights.find(type);
+    rights.erase(pos, 1);
+}
+
+
+void Board::addCastlingRights(char type)
+{
+    std::string& rights = this->getCastlingRights();
+
+    assert(rights.size() < 4);
+
+    rights += type;
 }
 
 
@@ -53,6 +75,8 @@ void Board::makeCastlingMove(Move &move)
 
                 this->setAt(move.getTo(), this->at(move.getFrom()));
                 this->setAt(algebraicToIndex("e1"), empty);
+
+                removeCastlingRights('K');
             } else {
                 Piece rook = this->at(algebraicToIndex("h8"));
 
@@ -61,6 +85,8 @@ void Board::makeCastlingMove(Move &move)
 
                 this->setAt(move.getTo(), this->at(move.getFrom()));
                 this->setAt(algebraicToIndex("e8"), empty);
+
+                removeCastlingRights('k');
             }
             break;
         case CastleType::QUEENSIDE:
@@ -72,6 +98,8 @@ void Board::makeCastlingMove(Move &move)
 
                 this->setAt(move.getTo(), this->at(move.getFrom()));
                 this->setAt(algebraicToIndex("e1"), empty);
+
+                removeCastlingRights('Q');
             } else {
                 Piece rook = this->at(algebraicToIndex("a8"));
 
@@ -80,6 +108,8 @@ void Board::makeCastlingMove(Move &move)
 
                 this->setAt(move.getTo(), this->at(move.getFrom()));
                 this->setAt(algebraicToIndex("e8"), empty);
+
+                removeCastlingRights('q');
             }
             break;
         default:
@@ -143,6 +173,8 @@ void Board::unmakeCastlingMove(Move &move)
 
                 this->setAt(algebraicToIndex("e1"), this->at(algebraicToIndex("g1")));
                 this->setAt(algebraicToIndex("g1"), empty);
+
+                addCastlingRights('K');
             } else {
                 Piece rook = this->at(algebraicToIndex("f8"));
 
@@ -151,6 +183,8 @@ void Board::unmakeCastlingMove(Move &move)
 
                 this->setAt(algebraicToIndex("e8"), this->at(algebraicToIndex("g8")));
                 this->setAt(algebraicToIndex("g8"), empty);
+
+                addCastlingRights('k');
             }
             break;
 
@@ -163,6 +197,8 @@ void Board::unmakeCastlingMove(Move &move)
 
                 this->setAt(algebraicToIndex("e1"), this->at(algebraicToIndex("c1")));
                 this->setAt(algebraicToIndex("c1"), empty);
+
+                addCastlingRights('Q');
             } else {
                 Piece rook = this->at(algebraicToIndex("d8"));
 
@@ -171,6 +207,8 @@ void Board::unmakeCastlingMove(Move &move)
 
                 this->setAt(algebraicToIndex("e8"), this->at(algebraicToIndex("c8")));
                 this->setAt(algebraicToIndex("c8"), empty);
+
+                addCastlingRights('q');
             }
             break;
 

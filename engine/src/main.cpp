@@ -3,6 +3,7 @@
 #include "board.hpp"
 #include "moveGenerator.hpp"
 #include "move.hpp"
+#include "boardPositions.hpp"
 
 
 void playGameWithInput() 
@@ -65,8 +66,17 @@ void playGameWithInput()
 }
 
 
+void playGameFromData(std::vector<std::string> &moves)
+{
+
+}
+
 int main() 
 {
-    playGameWithInput();
+
+
+
+    // playGameWithInput();
+    playGameFromData(operaGameMoves);
     return 0;
 }
