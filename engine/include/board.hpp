@@ -44,7 +44,14 @@ public:
 
     // Makes the move specified by the move object on board. Assumes that the move is perfectly valid.
     void makeMove(Move &move);
+
+    // These could be private
+    void makeCastlingMove(Move &move);
+    void makeNormalMove(Move &move);
+
     void unmakeMove();
 
-    void makeCastlingMove(Move &move);
+    // These aswell
+    void unmakeCastlingMove(Move &move);
+    void unmakeNormalMove(Move &move);
 };

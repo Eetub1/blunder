@@ -88,6 +88,16 @@ void Board::makeCastlingMove(Move &move)
 }
 
 
+void Board::makeNormalMove(Move &move)
+{
+    this->grid[move.getTo()] = this->grid[move.getFrom()];
+
+    Piece empty;
+    empty.setType(PieceType::EMPTY);
+    this->grid[move.getFrom()] = empty;
+}
+
+
 void Board::makeMove(Move &move) 
 {
     switch(move.getMoveType()) {
@@ -98,17 +108,75 @@ void Board::makeMove(Move &move)
             break;
         case MoveType::ENPASSANT:
             break;
-        // This could also maybe be its own function?
-        default: // Normal move
-            this->grid[move.getTo()] = this->grid[move.getFrom()];
-
-            // The square we moved from will always be empty
-            Piece empty;
-            empty.setType(PieceType::EMPTY);
-            this->grid[move.getFrom()] = empty;
+        default:
+            makeNormalMove(move);
             break;
     }
     undoStack.push_back(move);
+}
+
+
+void Board::unmakeNormalMove(Move &move)
+{
+    Piece toSquarePiece = this->grid[move.getTo()];
+    this->grid[move.getFrom()] = toSquarePiece;
+    Piece capturedPiece;
+    capturedPiece.setType(move.getCapturedPieceType());
+    this->grid[move.getTo()] = capturedPiece;
+}
+
+
+void Board::unmakeCastlingMove(Move &move)
+{
+    Color color = move.getColor();
+
+    Piece empty;
+    empty.setType(PieceType::EMPTY);
+
+    switch (move.getCastleType()) {
+        case CastleType::KINGSIDE:
+            if (color == Color::WHITE) {
+                Piece rook = this->at(algebraicToIndex("f1"));
+
+                this->setAt(algebraicToIndex("f1"), empty);
+                this->setAt(algebraicToIndex("h1"), rook);
+
+                this->setAt(algebraicToIndex("e1"), this->at(algebraicToIndex("g1")));
+                this->setAt(algebraicToIndex("g1"), empty);
+            } else {
+                Piece rook = this->at(algebraicToIndex("f8"));
+
+                this->setAt(algebraicToIndex("f8"), empty);
+                this->setAt(algebraicToIndex("h8"), rook);
+
+                this->setAt(algebraicToIndex("e8"), this->at(algebraicToIndex("g8")));
+                this->setAt(algebraicToIndex("g8"), empty);
+            }
+            break;
+
+        case CastleType::QUEENSIDE:
+            if (color == Color::WHITE) {
+                Piece rook = this->at(algebraicToIndex("d1"));
+
+                this->setAt(algebraicToIndex("d1"), empty);
+                this->setAt(algebraicToIndex("a1"), rook);
+
+                this->setAt(algebraicToIndex("e1"), this->at(algebraicToIndex("c1")));
+                this->setAt(algebraicToIndex("c1"), empty);
+            } else {
+                Piece rook = this->at(algebraicToIndex("d8"));
+
+                this->setAt(algebraicToIndex("d8"), empty);
+                this->setAt(algebraicToIndex("a8"), rook);
+
+                this->setAt(algebraicToIndex("e8"), this->at(algebraicToIndex("c8")));
+                this->setAt(algebraicToIndex("c8"), empty);
+            }
+            break;
+
+        default:
+            break;
+    }
 }
 
 
@@ -123,12 +191,15 @@ void Board::unmakeMove()
     this->undoStack.pop_back();
 
     switch(move.getMoveType()) {
-        default: // MoveType::NORMAL
-            Piece toSquarePiece = this->grid[move.getTo()];
-            this->grid[move.getFrom()] = toSquarePiece;
-            Piece capturedPiece;
-            capturedPiece.setType(move.getCapturedPieceType());
-            this->grid[move.getTo()] = capturedPiece;
+        case MoveType::CASTLING:
+            unmakeCastlingMove(move);
+            break;
+        case MoveType::PROMOTION:
+            break;
+        case MoveType::ENPASSANT:
+            break;
+        default:
+            unmakeNormalMove(move);
             break;
     }
     this->swapTurn();
