@@ -36,7 +36,7 @@ void playGameWithInput()
             // Check if move is in legalMoves
             Move *move;
             bool isValid = false;
-            for (auto legalMove : legalMoves) {
+            for (auto &legalMove : legalMoves) {
                 if (legalMove.getFrom() == fromIndex && legalMove.getTo() == toIndex) {
                     move = &legalMove;
 

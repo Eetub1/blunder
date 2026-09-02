@@ -33,6 +33,7 @@ public:
     bool               isMoveLegal();  
     SquareContent      squareState(int from, int target); // Returns what is in the target square in relation to the from square
     Piece              at(int index) {return this->grid[index];}
+    void               setAt(int index, Piece piece) {this->grid[index] = piece;}
 
     PieceType          getSquarePieceType(int index);
     std::vector<Piece> getGrid() {return this->grid;}

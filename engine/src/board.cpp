@@ -6,6 +6,7 @@
 #include "types.hpp"
 #include "move.hpp"
 #include "moveGenerator.hpp"
+#include "utils.hpp"
 
 Board::Board() 
     : grid(64) 
@@ -31,23 +32,53 @@ void Board::setupCustomBoard(std::vector<PieceType>)
 }
 
 
-void Board::makeCastlingMove(Move &move) 
+void Board::makeCastlingMove(Move &move)
 {
     Color color = move.getColor();
+
+    Piece empty;
+    empty.setType(PieceType::EMPTY);
+
     switch (move.getCastleType()) {
         case CastleType::KINGSIDE:
             if (color == Color::WHITE) {
+                Piece rook = this->at(algebraicToIndex("h1"));
 
+                this->setAt(algebraicToIndex("h1"), empty);
+                this->setAt(algebraicToIndex("f1"), rook);
+
+                this->setAt(move.getTo(), this->at(move.getFrom()));
+                this->setAt(algebraicToIndex("e1"), empty);
             } else {
+                Piece rook = this->at(algebraicToIndex("h8"));
 
+                this->setAt(algebraicToIndex("h8"), empty);
+                this->setAt(algebraicToIndex("f8"), rook);
+
+                this->setAt(move.getTo(), this->at(move.getFrom()));
+                this->setAt(algebraicToIndex("e8"), empty);
             }
             break;
         case CastleType::QUEENSIDE:
             if (color == Color::WHITE) {
+                Piece rook = this->at(algebraicToIndex("a1"));
 
+                this->setAt(algebraicToIndex("a1"), empty);
+                this->setAt(algebraicToIndex("d1"), rook);
+
+                this->setAt(move.getTo(), this->at(move.getFrom()));
+                this->setAt(algebraicToIndex("e1"), empty);
             } else {
-                
+                Piece rook = this->at(algebraicToIndex("a8"));
+
+                this->setAt(algebraicToIndex("a8"), empty);
+                this->setAt(algebraicToIndex("d8"), rook);
+
+                this->setAt(move.getTo(), this->at(move.getFrom()));
+                this->setAt(algebraicToIndex("e8"), empty);
             }
+            break;
+        default:
             break;
     }
 }
@@ -65,9 +96,9 @@ void Board::makeMove(Move &move)
             break;
         // This could also maybe be its own function?
         default: // Normal move
-            Piece toSquarePiece = this->grid[move.getTo()];
             this->grid[move.getTo()] = this->grid[move.getFrom()];
 
+            // The square we moved from will always be empty
             Piece empty;
             empty.setType(PieceType::EMPTY);
             this->grid[move.getFrom()] = empty;
@@ -184,4 +215,5 @@ bool Board::isInCheck(bool white)
 bool Board::isMoveLegal()
 {
     // TODO
+    return true;
 }
