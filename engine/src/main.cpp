@@ -33,13 +33,19 @@ void playGameWithInput()
             MoveGenerator mg;
             std::vector<Move> legalMoves = mg.generateLegalMoves(board);
 
-            // Check if move is in legalMoves
-            Move *move;
+            Color turn = board.getWhoseTurn();
+            Color whoIsMoving = board.getPieceColor(fromIndex);
+            std::cout << "Piece color about to move: " << whoIsMoving << std::endl;
+
+            if (turn != whoIsMoving) {
+                std::cout << "It's not your turn to move!" << std::endl;
+                continue;
+            }
+
+            // Check if given move is in legalMoves
             bool isValid = false;
             for (auto &legalMove : legalMoves) {
                 if (legalMove.getFrom() == fromIndex && legalMove.getTo() == toIndex) {
-                    move = &legalMove;
-
                     board.makeMove(legalMove);
                     board.swapTurn();
                     
@@ -47,13 +53,14 @@ void playGameWithInput()
                     break;
                 }
             }
-            std::string piece = isValid ? "valid" : "not valid";
-            std::cout << "The move you made was " << piece << std::endl; 
+            std::cout << "The move you made was " << (isValid ? "valid" : "not valid") << std::endl; 
 
             // a bit dangerous because move could be null
-            std::cout << "The type of the made move was: " << move->getMoveType() << std::endl; 
+            // std::cout << "The type of the made move was: " << move->getMoveType() << std::endl; 
         }
         printBoard(board);
+        std::string turn = board.getWhoseTurn() == Color::WHITE ? "White" : "Black";
+        std::cout << "Turn: " << turn << std::endl;
     }
 }
 

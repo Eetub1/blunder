@@ -20,7 +20,11 @@ void Board::setupDefaultBoard()
 {
     for (unsigned int i = 0; i < 64; i++) {
         Piece p;
-        p.setType(defaultBoard[i]);
+        PieceType type = defaultBoard[i];
+        p.setType(type);
+
+        Color color = WP <= type && type <= WK ? Color::WHITE : Color::BLACK;
+        p.setColor(color);
         this->grid[i] = p;
     }
 }
@@ -127,6 +131,7 @@ void Board::unmakeMove()
             this->grid[move.getTo()] = capturedPiece;
             break;
     }
+    this->swapTurn();
 }
 
 
