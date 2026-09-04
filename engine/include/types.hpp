@@ -2,7 +2,7 @@
 
 typedef enum 
 {
-    INVALID, MOVE, UNMAKEMOVE, QUIT
+    INVALID, MAKEMOVE, UNMAKEMOVE, QUIT
 } InputState;
 
 typedef enum 
@@ -28,8 +28,7 @@ typedef enum
     NORMAL, CASTLING, PROMOTION, ENPASSANT
 } MoveType;
 
-// What is in a square in relation to another square
-typedef enum {
+typedef enum { // What is in a square in relation to another square
     ENEMY_SQUARE, FRIEND_SQUARE, EMPTY_SQUARE
 } SquareContent;
 

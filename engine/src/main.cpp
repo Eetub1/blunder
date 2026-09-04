@@ -33,7 +33,7 @@ std::pair<int, int> readInput(int &state)
             return {-1, -1};
         }
 
-        state = InputState::MOVE;
+        state = InputState::MAKEMOVE;
         return {fromIndex, toIndex};
     } else {
         state = InputState::INVALID;
@@ -54,28 +54,34 @@ void playGameWithInput()
         int from = move.first;
         int to = move.second;
 
-        if (state == InputState::INVALID) {
-            std::cout << "INPUT WAS INVALID" << std::endl;
-            continue;
-        } else if (state == InputState::QUIT) {
-            std::cout << "Exiting game" << std::endl;
-            break;
-        } else if (state == InputState::UNMAKEMOVE) {
-            std::cout << "Unmaking previous move" << std::endl;
-            board.unmakeMove();
-        } else {
-            MoveGenerator mg;
-            std::vector<Move> legalMoves = mg.generateLegalMoves(board);
+        switch (state) {
+            case InputState::INVALID:
+                std::cout << "INPUT WAS INVALID" << std::endl;
+                continue;
 
-            Move foundMove;
-            bool isValid = board.isMoveLegal(legalMoves, from, to, foundMove);
-            if (isValid) {
-                board.makeMove(foundMove);
-                board.swapTurn();
-            }
+            case InputState::QUIT:
+                std::cout << "Exiting game" << std::endl;
+                return;
 
-            // std::cout << "En passant: " << board.getEnPassantSquare() << std::endl;
-            std::cout << "Made move was " << (isValid ? "valid" : "not valid") << std::endl; 
+            case InputState::UNMAKEMOVE:
+                std::cout << "Unmaking previous move" << std::endl;
+                board.unmakeMove();
+                break;
+
+            default: // InputState::MAKEMOVE
+                MoveGenerator mg;
+                std::vector<Move> legalMoves = mg.generateLegalMoves(board);
+
+                Move foundMove;
+                bool isValid = board.isMoveLegal(legalMoves, from, to, foundMove);
+                if (isValid) {
+                    board.makeMove(foundMove);
+                    board.swapTurn();
+                }
+
+                // std::cout << "En passant: " << board.getEnPassantSquare() << std::endl;
+                std::cout << "Made move was " << (isValid ? "valid" : "not valid") << std::endl; 
+                break;
         }
 
         printBoard(board);
