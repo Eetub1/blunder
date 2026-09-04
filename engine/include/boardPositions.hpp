@@ -13,7 +13,7 @@ PieceType defaultBoard[64]  = {
     WR, WN, WB, WQ, WK, WB, WN, WR 
 };
 
-// The famous opera game
+// Murphy's famous opera game
 std::vector<std::string> operaGameMoves = {
     "e2-e4", "e7-e5", // 1. e4 e5
     "g1-f3", "d7-d6", // 2. Nf3 d6

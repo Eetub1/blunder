@@ -33,7 +33,7 @@ void Board::setupDefaultBoard()
 
 void Board::setupCustomBoardFromFen(std::string fen) 
 {
-
+    std::cout << fen << std::endl;
 }
 
 
@@ -128,6 +128,25 @@ void Board::makeNormalMove(Move &move)
 }
 
 
+void Board::makeEnPassantMove(Move &move)
+{
+    // Move capturing pawn to en passant targe square
+    Piece pawn;
+    pawn.setType(move.getMovedPiece());
+    this->setAt(move.getTo(), pawn);
+
+    // Clear the previous spot where the pawn was
+    Piece empty;
+    empty.setType(PieceType::EMPTY);
+    this->setAt(move.getFrom(), empty);
+
+    // Also capture the pawn that just moved 2 squares
+    Color movedPawnColor = move.getColor();
+    int pawnToCaptureSquare = movedPawnColor == Color::WHITE ? move.getTo() + 8 : move.getTo() - 8;
+    this->setAt(pawnToCaptureSquare, empty);
+}
+
+
 void Board::makeMove(Move &move) 
 {
     switch(move.getMoveType()) {
@@ -137,11 +156,26 @@ void Board::makeMove(Move &move)
         case MoveType::PROMOTION:
             break;
         case MoveType::ENPASSANT:
+            makeEnPassantMove(move);
             break;
         default:
             makeNormalMove(move);
             break;
     }
+
+    // if the normal move was a pawn moving forward two squares, en passant is available
+    PieceType piece = move.getMovedPiece();
+    int rowDiff = abs(move.getFrom() - move.getTo()) / 8;
+    if ((piece == PieceType::WP || piece == PieceType::BP) && rowDiff == 2) {
+        Color color = move.getColor();
+        int diff = color == Color::WHITE ? 8 : -8;
+        this->setEnPassantSquare(move.getTo() + diff);
+    } else {
+        // else we set en passant unavailable
+        this->setEnPassantSquare(-1);
+    }
+
+
     undoStack.push_back(move);
 }
 

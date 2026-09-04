@@ -3,7 +3,6 @@
 #include "board.hpp"
 #include "moveGenerator.hpp"
 #include "move.hpp"
-#include "boardPositions.hpp"
 
 
 void playGameWithInput() 
@@ -29,10 +28,6 @@ void playGameWithInput()
                 std::cout << "Invalid input, exiting game" << std::endl;
                 break;
             }
-            
-            // Generate all possible moves in the position
-            MoveGenerator mg;
-            std::vector<Move> legalMoves = mg.generateLegalMoves(board);
 
             Color turn = board.getWhoseTurn();
             Color whoIsMoving = board.getPieceColor(fromIndex);
@@ -42,6 +37,10 @@ void playGameWithInput()
                 std::cout << "It's not your turn to move!" << std::endl;
                 continue;
             }
+            
+            // Generate all possible moves in the position
+            MoveGenerator mg;
+            std::vector<Move> legalMoves = mg.generateLegalMoves(board);
 
             // Check if given move is in legalMoves
             bool isValid = false;
@@ -54,10 +53,8 @@ void playGameWithInput()
                     break;
                 }
             }
+            std::cout << "En passant: " << board.getEnPassantSquare() << std::endl;
             std::cout << "The move you made was " << (isValid ? "valid" : "not valid") << std::endl; 
-
-            // a bit dangerous because move could be null
-            // std::cout << "The type of the made move was: " << move->getMoveType() << std::endl; 
         }
         printBoard(board);
         std::string turn = board.getWhoseTurn() == Color::WHITE ? "White" : "Black";
@@ -66,17 +63,16 @@ void playGameWithInput()
 }
 
 
-void playGameFromData(std::vector<std::string> &moves)
+/*void playGameFromData(std::vector<std::string> &moves)
 {
 
-}
+}*/
+
 
 int main() 
 {
 
-
-
-    // playGameWithInput();
-    playGameFromData(operaGameMoves);
+    playGameWithInput();
+    // playGameFromData(operaGameMoves);
     return 0;
 }

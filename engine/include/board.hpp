@@ -41,6 +41,7 @@ public:
     std::vector<Piece> getGrid() {return this->grid;}
     Color              getPieceColor(int index) {return this->grid[index].getColor();}
     int                getEnPassantSquare() {return this->enPassantSquare;}
+    void               setEnPassantSquare(int index) {this->enPassantSquare = index;} 
     std::string&       getCastlingRights() {return this->castlingRights;}
     Color              getWhoseTurn() {return this->whoseTurn;}
 
@@ -50,6 +51,7 @@ public:
     // These could be private
     void makeCastlingMove(Move &move);
     void makeNormalMove(Move &move);
+    void makeEnPassantMove(Move &move);
 
     void unmakeMove();
 
