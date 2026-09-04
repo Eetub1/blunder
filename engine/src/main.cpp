@@ -1,8 +1,45 @@
+#include <utility>
+#include <sstream>
+
 #include "utils.hpp"
 #include "types.hpp"
 #include "board.hpp"
 #include "moveGenerator.hpp"
 #include "move.hpp"
+
+
+std::pair<int, int> readInput(int &state)
+{
+    std::string line;
+    std::getline(std::cin, line);
+
+    if (line == "un") {
+        state = InputState::UNMAKEMOVE;
+        return {-1, -1};
+    } else if (line == "quit") {
+        state = InputState::QUIT;
+        return {-1, -1};
+    } else if (line.size() == 5) {
+        std::string from;
+        std::string to;
+        std::stringstream ss(line);
+        ss >> from >> to;
+
+        int fromIndex = algebraicToIndex(from);
+        int toIndex = algebraicToIndex(to);
+        
+        if (!(0 <= fromIndex && fromIndex < 64) || !(0 <= toIndex && toIndex < 64)) {
+            state = InputState::INVALID;
+            return {-1, -1};
+        }
+
+        state = InputState::MOVE;
+        return {fromIndex, toIndex};
+    } else {
+        state = InputState::INVALID;
+        return {-1, -1};
+    }
+}
 
 
 void playGameWithInput() 
@@ -12,50 +49,35 @@ void playGameWithInput()
     printBoard(board);
 
     while (true) {
-        std::string from;
-        std::string to;
-        std::getline(std::cin, from, ' ');
-        std::getline(std::cin, to, '\n');
+        int state = -1;
+        std::pair<int, int> move = readInput(state);
+        int from = move.first;
+        int to = move.second;
 
-        if (from == "un") {
+        if (state == InputState::INVALID) {
+            std::cout << "INPUT WAS INVALID" << std::endl;
+            continue;
+        } else if (state == InputState::QUIT) {
+            std::cout << "Exiting game" << std::endl;
+            break;
+        } else if (state == InputState::UNMAKEMOVE) {
             std::cout << "Unmaking previous move" << std::endl;
             board.unmakeMove();
         } else {
-            int fromIndex = algebraicToIndex(from);
-            int toIndex = algebraicToIndex(to);
-        
-            if (!(0 <= fromIndex && fromIndex < 64) || !(0 <= toIndex && toIndex < 64)) {
-                std::cout << "Invalid input, exiting game" << std::endl;
-                break;
-            }
-
-            Color turn = board.getWhoseTurn();
-            Color whoIsMoving = board.getPieceColor(fromIndex);
-            std::cout << "Piece color about to move: " << whoIsMoving << std::endl;
-
-            if (turn != whoIsMoving) {
-                std::cout << "It's not your turn to move!" << std::endl;
-                continue;
-            }
-            
-            // Generate all possible moves in the position
             MoveGenerator mg;
             std::vector<Move> legalMoves = mg.generateLegalMoves(board);
 
-            // Check if given move is in legalMoves
-            bool isValid = false;
-            for (auto &legalMove : legalMoves) {
-                if (legalMove.getFrom() == fromIndex && legalMove.getTo() == toIndex) {
-                    board.makeMove(legalMove);
-                    board.swapTurn();
-                    
-                    isValid = true;
-                    break;
-                }
+            Move foundMove;
+            bool isValid = board.isMoveLegal(legalMoves, from, to, foundMove);
+            if (isValid) {
+                board.makeMove(foundMove);
+                board.swapTurn();
             }
-            std::cout << "En passant: " << board.getEnPassantSquare() << std::endl;
-            std::cout << "The move you made was " << (isValid ? "valid" : "not valid") << std::endl; 
+
+            // std::cout << "En passant: " << board.getEnPassantSquare() << std::endl;
+            std::cout << "Made move was " << (isValid ? "valid" : "not valid") << std::endl; 
         }
+
         printBoard(board);
         std::string turn = board.getWhoseTurn() == Color::WHITE ? "White" : "Black";
         std::cout << "Turn: " << turn << std::endl;

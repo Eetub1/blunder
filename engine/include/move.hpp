@@ -5,9 +5,9 @@
 class Move {
 public:
     Move(
-        int from, 
-        int to, 
-        PieceType movedPiece,
+        int from = -1, 
+        int to = -1, 
+        PieceType movedPieceType = PieceType::EMPTY,
         int enPassantSquare = -1,
         PieceType capturedPieceType = PieceType::EMPTY,
         PieceType promotionPiece = PieceType::EMPTY,
@@ -15,7 +15,7 @@ public:
         MoveType moveType = MoveType::NORMAL
     ) : from(from),
         to(to),
-        movedPiece(movedPiece),
+        movedPieceType(movedPieceType),
         enPassantSquare(enPassantSquare),
         capturedPieceType(capturedPieceType),
         promotionPiece(promotionPiece),
@@ -27,10 +27,10 @@ public:
 
     int getFrom() const { return from; }
     int getTo() const { return to; }
-    PieceType getMovedPiece() const { return movedPiece; }
-    Color getColor() const 
+    PieceType getMovedPieceType() const { return movedPieceType; }
+    Color getMovedPieceColor() const 
     {
-        PieceType type = this->getMovedPiece();
+        PieceType type = this->getMovedPieceType();
         if (type >= WP && type <= WK) return Color::WHITE;
         return Color::BLACK;
     }
@@ -45,7 +45,7 @@ public:
 private:
     int from;
     int to;    
-    PieceType movedPiece;
+    PieceType movedPieceType;
     int enPassantSquare;
     PieceType capturedPieceType;
     PieceType promotionPiece;

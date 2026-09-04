@@ -60,7 +60,7 @@ void Board::addCastlingRights(char type)
 
 void Board::makeCastlingMove(Move &move)
 {
-    Color color = move.getColor();
+    Color color = move.getMovedPieceColor();
 
     Piece empty;
     empty.setType(PieceType::EMPTY);
@@ -132,7 +132,7 @@ void Board::makeEnPassantMove(Move &move)
 {
     // Move capturing pawn to en passant targe square
     Piece pawn;
-    pawn.setType(move.getMovedPiece());
+    pawn.setType(move.getMovedPieceType());
     this->setAt(move.getTo(), pawn);
 
     // Clear the previous spot where the pawn was
@@ -141,7 +141,7 @@ void Board::makeEnPassantMove(Move &move)
     this->setAt(move.getFrom(), empty);
 
     // Also capture the pawn that just moved 2 squares
-    Color movedPawnColor = move.getColor();
+    Color movedPawnColor = move.getMovedPieceColor();
     int pawnToCaptureSquare = movedPawnColor == Color::WHITE ? move.getTo() + 8 : move.getTo() - 8;
     this->setAt(pawnToCaptureSquare, empty);
 }
@@ -163,18 +163,17 @@ void Board::makeMove(Move &move)
             break;
     }
 
-    // if the normal move was a pawn moving forward two squares, en passant is available
-    PieceType piece = move.getMovedPiece();
+    // if the move was a pawn moving forward two squares, en passant is available
+    PieceType piece = move.getMovedPieceType();
     int rowDiff = abs(move.getFrom() - move.getTo()) / 8;
     if ((piece == PieceType::WP || piece == PieceType::BP) && rowDiff == 2) {
-        Color color = move.getColor();
+        Color color = move.getMovedPieceColor();
         int diff = color == Color::WHITE ? 8 : -8;
         this->setEnPassantSquare(move.getTo() + diff);
     } else {
         // else we set en passant unavailable
         this->setEnPassantSquare(-1);
     }
-
 
     undoStack.push_back(move);
 }
@@ -192,7 +191,7 @@ void Board::unmakeNormalMove(Move &move)
 
 void Board::unmakeCastlingMove(Move &move)
 {
-    Color color = move.getColor();
+    Color color = move.getMovedPieceColor();
 
     Piece empty;
     empty.setType(PieceType::EMPTY);
@@ -252,6 +251,26 @@ void Board::unmakeCastlingMove(Move &move)
 }
 
 
+void Board::unmakeEnPassantMove(Move &move) {
+    Piece empty;
+    empty.setType(PieceType::EMPTY);
+
+    Piece movedPiece = this->at(move.getTo());
+    PieceType movedPieceType = move.getMovedPieceType();
+    this->setAt(move.getTo(), empty);
+    this->setAt(move.getFrom(), movedPiece);
+
+    Piece capturedPawn;
+    PieceType capturedPawnType = movedPieceType == WP ? BP : WP;
+    capturedPawn.setType(capturedPawnType);
+
+    int diff = move.getMovedPieceColor() == Color::WHITE ? 8 : -8;
+    this->setAt(move.getTo() + diff, capturedPawn);
+
+    // need to make the en passant available again
+}
+
+
 void Board::unmakeMove() 
 {
     if (!this->undoStack.size()) {
@@ -269,6 +288,7 @@ void Board::unmakeMove()
         case MoveType::PROMOTION:
             break;
         case MoveType::ENPASSANT:
+            unmakeEnPassantMove(move);
             break;
         default:
             unmakeNormalMove(move);
@@ -360,8 +380,22 @@ bool Board::isInCheck(bool white)
 }
 
 
-bool Board::isMoveLegal()
+bool Board::isMoveLegal(std::vector<Move> &legalMoves, int from, int to, Move &foundMove)
 {
-    // TODO
-    return true;
+    Color turn = this->getWhoseTurn();
+    Color whoIsMoving = this->getPieceColor(from);
+    std::cout << "Piece color about to move: " << whoIsMoving << std::endl;
+
+    if (turn != whoIsMoving) {
+        std::cout << "It's not your turn to move!" << std::endl;
+        return false;
+    }
+
+    for (auto &legalMove : legalMoves) {
+        if (legalMove.getFrom() == from && legalMove.getTo() == to) {
+            foundMove = legalMove;
+            return true;   
+        }
+    }
+    return false;
 }

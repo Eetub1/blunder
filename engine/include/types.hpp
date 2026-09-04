@@ -2,6 +2,11 @@
 
 typedef enum 
 {
+    INVALID, MOVE, UNMAKEMOVE, QUIT
+} InputState;
+
+typedef enum 
+{
     EMPTY, 
     WP, WN, WB, WR, WQ, WK,
     BP, BN, BB, BR, BQ, BK

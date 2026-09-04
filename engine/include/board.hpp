@@ -30,7 +30,7 @@ public:
     int                findKing(bool white);
     bool               isSquareAttacked(int from, bool byWhite);
     bool               isInCheck(bool white);
-    bool               isMoveLegal();  
+    bool               isMoveLegal(std::vector<Move> &legalMoves, int from, int to, Move &foundMove); 
     SquareContent      squareState(int from, int target); // Returns what is in the target square in relation to the from square
     void               removeCastlingRights(char type);
     void               addCastlingRights(char type);
@@ -58,4 +58,5 @@ public:
     // These aswell
     void unmakeCastlingMove(Move &move);
     void unmakeNormalMove(Move &move);
+    void unmakeEnPassantMove(Move &move);
 };
