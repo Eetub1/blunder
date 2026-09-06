@@ -14,8 +14,7 @@ typedef enum
 
 typedef enum  
 {
-    WHITE,
-    BLACK
+    WHITE, BLACK, NOCOLOR
 } Color;
 
 typedef enum 

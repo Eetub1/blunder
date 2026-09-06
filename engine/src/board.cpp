@@ -20,12 +20,7 @@ Board::~Board() {}
 void Board::setupDefaultBoard() 
 {
     for (unsigned int i = 0; i < 64; i++) {
-        Piece p;
-        PieceType type = defaultBoard[i];
-        p.setType(type);
-
-        Color color = WP <= type && type <= WK ? Color::WHITE : Color::BLACK;
-        p.setColor(color);
+        Piece p(defaultBoard[i]);
         this->grid[i] = p;
     }
 }
@@ -61,9 +56,7 @@ void Board::addCastlingRights(char type)
 void Board::makeCastlingMove(Move &move)
 {
     Color color = move.getMovedPieceColor();
-
-    Piece empty;
-    empty.setType(PieceType::EMPTY);
+    Piece empty(PieceType::EMPTY);
 
     switch (move.getCastleType()) {
         case CastleType::KINGSIDE:
@@ -121,9 +114,7 @@ void Board::makeCastlingMove(Move &move)
 void Board::makeNormalMove(Move &move)
 {
     this->grid[move.getTo()] = this->grid[move.getFrom()];
-
-    Piece empty;
-    empty.setType(PieceType::EMPTY);
+    Piece empty(PieceType::EMPTY);
     this->grid[move.getFrom()] = empty;
 }
 
@@ -131,13 +122,11 @@ void Board::makeNormalMove(Move &move)
 void Board::makeEnPassantMove(Move &move)
 {
     // Move capturing pawn to en passant targe square
-    Piece pawn;
-    pawn.setType(move.getMovedPieceType());
+    Piece pawn(move.getMovedPieceType());
     this->setAt(move.getTo(), pawn);
 
     // Clear the previous spot where the pawn was
-    Piece empty;
-    empty.setType(PieceType::EMPTY);
+    Piece empty(PieceType::EMPTY);
     this->setAt(move.getFrom(), empty);
 
     // Also capture the pawn that just moved 2 squares
@@ -183,8 +172,8 @@ void Board::unmakeNormalMove(Move &move)
 {
     Piece toSquarePiece = this->grid[move.getTo()];
     this->grid[move.getFrom()] = toSquarePiece;
-    Piece capturedPiece;
-    capturedPiece.setType(move.getCapturedPieceType());
+    
+    Piece capturedPiece(move.getCapturedPieceType());
     this->grid[move.getTo()] = capturedPiece;
 }
 
@@ -193,8 +182,7 @@ void Board::unmakeCastlingMove(Move &move)
 {
     Color color = move.getMovedPieceColor();
 
-    Piece empty;
-    empty.setType(PieceType::EMPTY);
+    Piece empty(PieceType::EMPTY);
 
     switch (move.getCastleType()) {
         case CastleType::KINGSIDE:
@@ -252,22 +240,20 @@ void Board::unmakeCastlingMove(Move &move)
 
 
 void Board::unmakeEnPassantMove(Move &move) {
-    Piece empty;
-    empty.setType(PieceType::EMPTY);
+    Piece empty(PieceType::EMPTY);
 
     Piece movedPiece = this->at(move.getTo());
     PieceType movedPieceType = move.getMovedPieceType();
     this->setAt(move.getTo(), empty);
     this->setAt(move.getFrom(), movedPiece);
 
-    Piece capturedPawn;
-    PieceType capturedPawnType = movedPieceType == WP ? BP : WP;
-    capturedPawn.setType(capturedPawnType);
+    Piece capturedPawn(movedPieceType == WP ? BP : WP);
 
     int diff = move.getMovedPieceColor() == Color::WHITE ? 8 : -8;
     this->setAt(move.getTo() + diff, capturedPawn);
 
-    // need to make the en passant available again
+    // Make en passant available again
+    this->setEnPassantSquare(move.getTo());
 }
 
 
@@ -388,6 +374,7 @@ bool Board::isMoveLegal(std::vector<Move> &legalMoves, int from, int to, Move &f
 
     if (turn != whoIsMoving) {
         std::cout << "It's not your turn to move!" << std::endl;
+        std::cout << "Tried to make move from " << indexToAlgebraic(from) << " to " << indexToAlgebraic(to) << std::endl;
         return false;
     }
 

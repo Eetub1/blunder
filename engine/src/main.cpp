@@ -79,7 +79,7 @@ void playGameWithInput()
                     board.swapTurn();
                 }
 
-                // std::cout << "En passant: " << board.getEnPassantSquare() << std::endl;
+                std::cout << "En passant: " << indexToAlgebraic(board.getEnPassantSquare()) << std::endl;
                 std::cout << "Made move was " << (isValid ? "valid" : "not valid") << std::endl; 
                 break;
         }
