@@ -76,7 +76,6 @@ void playGameWithInput()
                 bool isValid = board.isMoveLegal(legalMoves, from, to, foundMove);
                 if (isValid) {
                     board.makeMove(foundMove);
-                    board.swapTurn();
                 }
 
                 std::cout << "En passant: " << indexToAlgebraic(board.getEnPassantSquare()) << std::endl;

@@ -18,11 +18,21 @@ std::vector<Move> MoveGenerator::generateLegalMoves(Board &board)
 
     for (int i = 0; i < 64; i++) {
         if (grid[i].getType() == PieceType::EMPTY) continue;
+        if (grid[i].getColor() != board.getWhoseTurn()) continue;
 
         // this returns all the pseudolegal moves in the position
         this->generateMoves(legalMoves, i, board);
     }
-    return legalMoves;
+
+    // all the legal moves have to be filtered to also take checks into consideration
+    std::vector<Move> fullyLegalMoves;
+    for (Move &move : legalMoves) {
+        board.makeMove(move);
+        bool kingInCheck = board.isInCheck(move.getMovedPieceColor() == Color::WHITE);
+        if (!kingInCheck) fullyLegalMoves.push_back(move);
+        board.unmakeMove();
+    }
+    return fullyLegalMoves;
 }
 
 
@@ -89,7 +99,7 @@ void MoveGenerator::generateKingMoves(std::vector<Move> &movesVector, int from, 
     generateSteppingMoves(movesVector, from, board, OFFSETS); 
 
     // All the castling moves need to be handled here as special cases
-    std::string castlingRights = board.getCastlingRights();
+    std::string& castlingRights = board.getCastlingRights();
     if (castlingRights == "-") return;
 
     if (board.getWhoseTurn() == Color::WHITE) {
@@ -259,4 +269,8 @@ void MoveGenerator::generatePawnMoves(std::vector<Move> &movesVector, int from, 
             }
         }
     }
+
+
+    // REMEMBER PROMOTION HERE!!!
+    // TODO
 }

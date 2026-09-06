@@ -30,6 +30,8 @@ public:
     int                findKing(bool white);
     bool               isSquareAttacked(int from, bool byWhite);
     bool               isInCheck(bool white);
+
+    // Is the move that has the from and to properties inside the legalMoves vector
     bool               isMoveLegal(std::vector<Move> &legalMoves, int from, int to, Move &foundMove); 
     SquareContent      squareState(int from, int target); // Returns what is in the target square in relation to the from square
     void               removeCastlingRights(char type);

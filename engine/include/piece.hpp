@@ -4,7 +4,6 @@
 
 class Piece 
 {
-
 private:
     PieceType type;
     Color color;

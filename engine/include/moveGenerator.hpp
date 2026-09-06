@@ -6,8 +6,8 @@
 #include "board.hpp"
 #include "move.hpp"
 
-class MoveGenerator {
-
+class MoveGenerator 
+{
 public:
     MoveGenerator() {};
     ~MoveGenerator() {};

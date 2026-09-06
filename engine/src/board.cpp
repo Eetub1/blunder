@@ -35,9 +35,6 @@ void Board::setupCustomBoardFromFen(std::string fen)
 void Board::removeCastlingRights(char type) 
 {
     std::string& rights = this->getCastlingRights();
-
-    assert(rights.size() > 2);
-
     size_t pos = rights.find(type);
     rights.erase(pos, 1);
 }
@@ -46,9 +43,6 @@ void Board::removeCastlingRights(char type)
 void Board::addCastlingRights(char type)
 {
     std::string& rights = this->getCastlingRights();
-
-    assert(rights.size() < 4);
-
     rights += type;
 }
 
@@ -163,7 +157,8 @@ void Board::makeMove(Move &move)
         // else we set en passant unavailable
         this->setEnPassantSquare(-1);
     }
-
+    
+    this->swapTurn();
     undoStack.push_back(move);
 }
 
@@ -378,6 +373,7 @@ bool Board::isMoveLegal(std::vector<Move> &legalMoves, int from, int to, Move &f
         return false;
     }
 
+    // If the move is found, its given as a reference to foundMove
     for (auto &legalMove : legalMoves) {
         if (legalMove.getFrom() == from && legalMove.getTo() == to) {
             foundMove = legalMove;
