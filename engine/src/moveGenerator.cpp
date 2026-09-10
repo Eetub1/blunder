@@ -187,20 +187,37 @@ void MoveGenerator::generatePawnMoves(std::vector<Move> &movesVector, int from, 
     int startRow = isWhite ? 6 : 1; // in which row does the pawn start the game
     int row = from / 8;
 
-    // can pawn go one square forward
+    // can pawn go one square forward, also handle noncapturing promotion here
     int oneAhead = from + forward;
     if (oneAhead >= 0 && oneAhead < 64) {
         if (board.squareState(from, oneAhead) == SquareContent::EMPTY_SQUARE) {
-            movesVector.push_back(Move(
-                from, 
-                oneAhead, 
-                isWhite ? PieceType::WP : PieceType::BP,
-                -1,
-                PieceType::EMPTY, 
-                PieceType::EMPTY, 
-                CastleType::NONE,
-                MoveType::NORMAL
-            ));
+
+            int toRow = (from + forward) / 8;
+            if (toRow == 0 || toRow == 7) { // if move is a promotion
+                movesVector.push_back(Move(
+                    from, 
+                    oneAhead, 
+                    isWhite ? PieceType::WP : PieceType::BP,
+                    -1,
+                    PieceType::EMPTY, 
+                    PieceType::EMPTY, 
+                    CastleType::NONE,
+                    MoveType::PROMOTION
+                ));
+                board.setShouldAskForPromotionPiece(true);
+
+            } else {
+                movesVector.push_back(Move(
+                    from, 
+                    oneAhead, 
+                    isWhite ? PieceType::WP : PieceType::BP,
+                    -1,
+                    PieceType::EMPTY, 
+                    PieceType::EMPTY, 
+                    CastleType::NONE,
+                    MoveType::NORMAL
+                ));
+            }
 
             // can pawn go two moves forward
             if (row == startRow) {
@@ -230,18 +247,34 @@ void MoveGenerator::generatePawnMoves(std::vector<Move> &movesVector, int from, 
         if (abs((from % 8) - (target % 8)) != 1) continue;
 
         if (board.squareState(from, target) == SquareContent::ENEMY_SQUARE) {
-            movesVector.push_back(Move(
-                from, 
-                target, 
-                isWhite ? PieceType::WP : PieceType::BP,
-                -1,
-                board.getSquarePieceType(target), 
-                PieceType::EMPTY, 
-                CastleType::NONE,
-                MoveType::NORMAL
-            ));
-        }
 
+            int toRow = (from + forward) / 8;
+            if (toRow == 0 || toRow == 7) { // if move is a promotion
+                movesVector.push_back(Move(
+                    from, 
+                    target, 
+                    isWhite ? PieceType::WP : PieceType::BP,
+                    -1,
+                    board.getSquarePieceType(target), 
+                    PieceType::EMPTY, 
+                    CastleType::NONE,
+                    MoveType::PROMOTION
+                ));
+                board.setShouldAskForPromotionPiece(true);
+
+            } else {
+                movesVector.push_back(Move(
+                    from, 
+                    target, 
+                    isWhite ? PieceType::WP : PieceType::BP,
+                    -1,
+                    board.getSquarePieceType(target), 
+                    PieceType::EMPTY, 
+                    CastleType::NONE,
+                    MoveType::NORMAL
+                ));
+            }
+        }
     }
 
     // is en passant possible
@@ -269,8 +302,4 @@ void MoveGenerator::generatePawnMoves(std::vector<Move> &movesVector, int from, 
             }
         }
     }
-
-
-    // REMEMBER PROMOTION HERE!!!
-    // TODO
 }

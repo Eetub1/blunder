@@ -106,12 +106,19 @@ void playGameWithInput()
                     std::cout << "---------------------------" << std::endl;
                 }
 
-
                 Move foundMove;
                 bool isValid = board.isMoveLegal(legalMoves, from, to, foundMove);
                 if (!isValid) {
                     std::cout << "Made move was not valid" << std::endl;
                     break;
+                }
+
+                if (board.shouldAskForPromotionPiece()) {
+                    // TODO
+                    std::cout << "Need to ask for the promotion piece here" << std::endl;
+                    // after we get the promotion piece from input, set the promotionPiece 
+                    // attribute of the move object!
+                    board.setShouldAskForPromotionPiece(false);
                 }
 
                 board.makeMove(foundMove);

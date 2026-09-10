@@ -131,6 +131,11 @@ void Board::makeEnPassantMove(Move &move)
 }
 
 
+void Board::makePromotionMove(Move &move) {
+
+}
+
+
 void Board::makeMove(Move &move) 
 {
     move.setEnPassantSquare(this->enPassantSquare);
@@ -140,6 +145,7 @@ void Board::makeMove(Move &move)
             makeCastlingMove(move);
             break;
         case MoveType::PROMOTION:
+            makePromotionMove(move);
             break;
         case MoveType::ENPASSANT:
             makeEnPassantMove(move);

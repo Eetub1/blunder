@@ -9,6 +9,23 @@
 
 inline std::string pieceToGlyph(PieceType type) {
     switch (type) {
+        /*
+        This is the actually the correct mapping but because im using a black terminal,
+        white pieces look like black and vice versa. Remember to switch these
+        case WK: return "\u2654"; // ♔
+        case WQ: return "\u2655"; // ♕
+        case WR: return "\u2656"; // ♖
+        case WB: return "\u2657"; // ♗
+        case WN: return "\u2658"; // ♘
+        case WP: return "\u2659"; // ♙
+        case BK: return "\u265A"; // ♚
+        case BQ: return "\u265B"; // ♛
+        case BR: return "\u265C"; // ♜
+        case BB: return "\u265D"; // ♝
+        case BN: return "\u265E"; // ♞
+        case BP: return "\u265F"; // ♟
+        */
+
         case WK: return "\u265A"; // ♚
         case WQ: return "\u265B"; // ♛
         case WR: return "\u265C"; // ♜

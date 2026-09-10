@@ -17,7 +17,7 @@ private:
     std::vector<Move> undoStack;
     std::string castlingRights = "KQkq";
     int enPassantSquare = -1;
-
+    bool askForPromotionPiece = false;
     Color whoseTurn = Color::WHITE;
 public:
     Board();
@@ -37,6 +37,8 @@ public:
     void               removeCastlingRights(char type);
     void               addCastlingRights(char type);
 
+    bool               shouldAskForPromotionPiece() {return this->askForPromotionPiece;}
+    void               setShouldAskForPromotionPiece(bool should) {this->askForPromotionPiece = should;}
     Piece              at(int index) {return this->grid[index];}
     void               setAt(int index, Piece piece) {this->grid[index] = piece;}
     PieceType          getSquarePieceType(int index);
@@ -55,6 +57,7 @@ public:
     void makeCastlingMove(Move &move);
     void makeNormalMove(Move &move);
     void makeEnPassantMove(Move &move);
+    void makePromotionMove(Move &move);
 
     void unmakeMove();
 
