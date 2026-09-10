@@ -57,6 +57,7 @@ void playGameWithInput()
         switch (state) {
             case InputState::INVALID:
                 std::cout << "INPUT WAS INVALID" << std::endl;
+                printBoard(board);
                 continue;
 
             case InputState::QUIT:
@@ -66,24 +67,73 @@ void playGameWithInput()
             case InputState::UNMAKEMOVE:
                 std::cout << "Unmaking previous move" << std::endl;
                 board.unmakeMove();
+                printBoard(board);
                 break;
 
             default: // InputState::MAKEMOVE
+            {
+                // Move generator can't modify board, castling rights, en passant or whose turn it is
+                std::vector<Piece> gridBefore = board.getGrid();
+                int epBefore = board.getEnPassantSquare();
+                std::string rightsBefore = board.getCastlingRights();
+                Color turnBefore = board.getWhoseTurn();
+
                 MoveGenerator mg;
                 std::vector<Move> legalMoves = mg.generateLegalMoves(board);
 
-                Move foundMove;
-                bool isValid = board.isMoveLegal(legalMoves, from, to, foundMove);
-                if (isValid) {
-                    board.makeMove(foundMove);
+                // Make sure that generateLegalMoves doesn't change state
+                {   
+                    std::cout << "---------------------------" << std::endl;
+                    for (int i = 0; i < 64; i++) {
+                        if (gridBefore[i].getType() != board.getSquarePieceType(i)) {
+                            std::cout << "move generator modified board!!!!" << std::endl;
+                            break;
+                        }
+                    }
+                
+                    if (epBefore != board.getEnPassantSquare()) {
+                        std::cout << "move generator modified en passant square!!!!" << std::endl;
+                    }
+
+                    if (rightsBefore != board.getCastlingRights()) {
+                        std::cout << "castling rights differ: " << rightsBefore << " " << board.getCastlingRights() << std::endl;
+                    }
+
+                    if (turnBefore != board.getWhoseTurn()) {
+                        std::cout << "move generator modified whose turn it is!!!!" << std::endl;
+                    }
+
+                    std::cout << "---------------------------" << std::endl;
                 }
 
-                std::cout << "En passant: " << indexToAlgebraic(board.getEnPassantSquare()) << std::endl;
-                std::cout << "Made move was " << (isValid ? "valid" : "not valid") << std::endl; 
-                break;
-        }
 
-        printBoard(board);
+                Move foundMove;
+                bool isValid = board.isMoveLegal(legalMoves, from, to, foundMove);
+                if (!isValid) {
+                    std::cout << "Made move was not valid" << std::endl;
+                    break;
+                }
+
+                board.makeMove(foundMove);
+
+                // Does next side have any moves they can make
+                std::vector<Move> replies = mg.generateLegalMoves(board);
+                GameState gameState = board.getGameState(replies.size());
+
+                printBoard(board);
+
+                if (gameState == GameState::CHECKMATE) {
+                    std::string winner = board.getWhoseTurn() == Color::WHITE ? "BLACK" : "WHITE";
+                    std::cout << "GAME IS OVER, THE WINNER IS: " << winner << std::endl;
+                    return;
+                }
+                if (gameState == GameState::STALEMATE) {
+                    std::cout << "GAME IS OVER, STALEMATE" << std::endl;
+                    return;
+                }
+                break;
+            }
+        }
         std::string turn = board.getWhoseTurn() == Color::WHITE ? "White" : "Black";
         std::cout << "Turn: " << turn << std::endl;
     }

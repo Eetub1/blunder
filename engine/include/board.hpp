@@ -46,6 +46,7 @@ public:
     void               setEnPassantSquare(int index) {this->enPassantSquare = index;} 
     std::string&       getCastlingRights() {return this->castlingRights;}
     Color              getWhoseTurn() {return this->whoseTurn;}
+    GameState          getGameState(int amountOfMoves);
 
     // Makes the move specified by the move object on board. Assumes that the move is perfectly valid.
     void makeMove(Move &move);

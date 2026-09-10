@@ -11,7 +11,7 @@ std::array<int, 4> ROOK_OFFSETS = {-8, -1, 1, 8};
 std::array<int, 8> KING_AND_QUEEN_OFFSETS = {-9, -8, -7, -1, 1, 7, 8, 9};
 
 
-std::vector<Move> MoveGenerator::generateLegalMoves(Board &board) 
+std::vector<Move> MoveGenerator::generateLegalMoves(Board &board)
 {
     std::vector<Move> legalMoves;
     std::vector<Piece> grid = board.getGrid();
@@ -210,7 +210,7 @@ void MoveGenerator::generatePawnMoves(std::vector<Move> &movesVector, int from, 
                         from, 
                         twoAhead, 
                         isWhite ? PieceType::WP : PieceType::BP,
-                        -1,
+                        -1, // maybe should set en passant square here?
                         PieceType::EMPTY, 
                         PieceType::EMPTY, 
                         CastleType::NONE,

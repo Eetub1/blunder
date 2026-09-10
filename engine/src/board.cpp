@@ -108,6 +108,7 @@ void Board::makeCastlingMove(Move &move)
 void Board::makeNormalMove(Move &move)
 {
     this->grid[move.getTo()] = this->grid[move.getFrom()];
+
     Piece empty(PieceType::EMPTY);
     this->grid[move.getFrom()] = empty;
 }
@@ -132,6 +133,8 @@ void Board::makeEnPassantMove(Move &move)
 
 void Board::makeMove(Move &move) 
 {
+    move.setEnPassantSquare(this->enPassantSquare);
+
     switch(move.getMoveType()) {
         case MoveType::CASTLING:
             makeCastlingMove(move);
@@ -275,6 +278,7 @@ void Board::unmakeMove()
             unmakeNormalMove(move);
             break;
     }
+    this->setEnPassantSquare(move.getEnPassantSquare());
     this->swapTurn();
 }
 
@@ -365,7 +369,6 @@ bool Board::isMoveLegal(std::vector<Move> &legalMoves, int from, int to, Move &f
 {
     Color turn = this->getWhoseTurn();
     Color whoIsMoving = this->getPieceColor(from);
-    std::cout << "Piece color about to move: " << whoIsMoving << std::endl;
 
     if (turn != whoIsMoving) {
         std::cout << "It's not your turn to move!" << std::endl;
@@ -381,4 +384,14 @@ bool Board::isMoveLegal(std::vector<Move> &legalMoves, int from, int to, Move &f
         }
     }
     return false;
+}
+
+
+GameState Board::getGameState(int amountOfMoves) 
+{
+    if (amountOfMoves > 0) return GameState::ONGOING;
+
+    bool check = isInCheck(this->getWhoseTurn() == Color::WHITE);
+    if (check) return GameState::CHECKMATE;
+    return GameState::STALEMATE;
 }

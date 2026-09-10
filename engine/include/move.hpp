@@ -41,6 +41,7 @@ public:
     MoveType getMoveType() const { return moveType; }
 
     void setCapturedPieceType(PieceType type) {this->capturedPieceType = type;}
+    void setEnPassantSquare(int square) {this->enPassantSquare = square;}
 
 private:
     int from;
